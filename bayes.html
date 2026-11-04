@@ -1,0 +1,1402 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>基礎胰島素滴定：固定規則 vs 貝氏方法</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* 版面：左側設定欄（寬螢幕固定）＋ 右側結果；結果以「固定規則 | 貝氏方法」成對並排。
+   色彩：固定規則＝藍、貝氏方法＝橘；目標範圍＝綠帶、低血糖＝深紅三角形（依 AGP 報告慣例）。 */
+:root {
+  --bg: #ffffff;
+  --rail: #f1f4f8;
+  --card: #ffffff;
+  --ink: #0e1721;
+  --ink-2: #3f4f63;
+  --muted: #5b6b7e;
+  --line: #dfe5ec;
+  --axis: #b5c0cc;
+  --fixed: #2a78d6;
+  --bayes: #eb6834;
+  --fixed-wash: rgba(42, 120, 214, 0.10);
+  --bayes-wash: rgba(235, 104, 52, 0.16);
+  --target-wash: rgba(12, 163, 12, 0.13);
+  --target-ink: #006300;
+  --hypo: #b4123a;
+  --hypo-ink: #a3133b;
+  --caution-bg: #fff2cc;
+  --caution-ink: #3b2a00;
+  --caution-line: #e8c766;
+  --focus: #1849c6;
+  --btn-bg: #0e1721;
+  --btn-ink: #ffffff;
+  --tip-bg: #ffffff;
+  --shadow: 0 6px 20px rgba(14, 23, 33, 0.12);
+  --font-display: "Noto Serif TC", "Source Han Serif TC", "Songti TC", "PMingLiU", serif;
+  --font-body: "Source Sans 3", "Noto Sans TC", "PingFang TC", "Heiti TC", "Microsoft JhengHei", "Noto Sans CJK TC", system-ui, sans-serif;
+  --footer-h: 3.4rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e141b; --rail: #151e28; --card: #121a23;
+    --ink: #e8edf3; --ink-2: #b6c2cf; --muted: #95a4b5;
+    --line: #243141; --axis: #3d4c5e;
+    --fixed: #3987e5; --bayes: #d07f2a;
+    --fixed-wash: rgba(57, 135, 229, 0.16); --bayes-wash: rgba(208, 127, 42, 0.18);
+    --target-wash: rgba(12, 163, 12, 0.17); --target-ink: #5fd35f;
+    --hypo: #e11d48; --hypo-ink: #ff7a95;
+    --caution-bg: #3a2c08; --caution-ink: #ffe7a6; --caution-line: #6b5414;
+    --focus: #8ab4ff; --btn-bg: #e8edf3; --btn-ink: #0e141b;
+    --tip-bg: #1b2531; --shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e141b; --rail: #151e28; --card: #121a23;
+  --ink: #e8edf3; --ink-2: #b6c2cf; --muted: #95a4b5;
+  --line: #243141; --axis: #3d4c5e;
+  --fixed: #3987e5; --bayes: #d07f2a;
+  --fixed-wash: rgba(57, 135, 229, 0.16); --bayes-wash: rgba(208, 127, 42, 0.18);
+  --target-wash: rgba(12, 163, 12, 0.17); --target-ink: #5fd35f;
+  --hypo: #e11d48; --hypo-ink: #ff7a95;
+  --caution-bg: #3a2c08; --caution-ink: #ffe7a6; --caution-line: #6b5414;
+  --focus: #8ab4ff; --btn-bg: #e8edf3; --btn-ink: #0e141b;
+  --tip-bg: #1b2531; --shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html {
+  font-size: clamp(16px, 13px + 0.35vw, 20px);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-bottom: calc(var(--footer-h) + 16px);
+}
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom, 0px));
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+[hidden] { display: none !important; }
+img, svg { max-width: 100%; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.page {
+  max-width: 1640px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 32px;
+}
+
+/* ---------- 標題 ---------- */
+.masthead { display: grid; gap: 10px; padding-block: 4px 22px; max-width: 72rem; }
+.eyebrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.eyebrow li {
+  font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; background: var(--rail);
+}
+.eyebrow li:first-child { color: var(--caution-ink); background: var(--caution-bg); border-color: var(--caution-line); }
+h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.75rem, 1.1rem + 2.2vw, 2.9rem);
+  line-height: 1.22;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+h1 .vs { font-family: var(--font-body); font-weight: 700; font-size: 0.7em; color: var(--muted); padding-inline: 0.15em; letter-spacing: 0.02em; }
+.lede { margin: 0; font-size: 1.125rem; color: var(--ink-2); max-width: 62em; }
+
+/* 白話說明 */
+.plain { margin: 0; color: var(--ink-2); font-size: 0.975rem; line-height: 1.65; max-width: 48em; }
+.plain::before {
+  content: "白話";
+  display: inline-block; margin-right: 0.5em; padding: 0 0.45em; transform: translateY(-1px);
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; line-height: 1.6;
+  color: var(--ink); border: 1.5px solid var(--ink); border-radius: 4px;
+}
+
+/* ---------- 版面 ---------- */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (min-width: 1100px) {
+  .layout { grid-template-columns: minmax(300px, 350px) minmax(0, 1fr); gap: 36px; }
+  .rail {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    max-height: calc(100vh - var(--footer-h) - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* ---------- 設定欄 ---------- */
+.rail {
+  background: var(--rail);
+  border-radius: 14px;
+  padding: 16px;
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.rail .plain { font-size: 0.875rem; line-height: 1.55; }
+@media (min-width: 720px) and (max-width: 1099.98px) {
+  .rail { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+}
+@media (min-width: 560px) and (max-width: 719.98px) {
+  .rail { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .rail .group:first-child { grid-column: 1 / -1; }
+}
+.group { display: grid; gap: 10px; min-width: 0; }
+.group + .group { border-top: 1px solid var(--line); padding-top: 16px; }
+@media (min-width: 560px) and (max-width: 1099.98px) {
+  .group + .group { border-top: 0; padding-top: 0; }
+}
+.group-title { margin: 0; font-size: 1.125rem; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.group-title .tag { font-size: 0.75rem; font-weight: 600; color: var(--muted); letter-spacing: 0.03em; }
+
+.seg { position: relative; display: grid; grid-template-columns: 1fr 1fr 0.75fr; border: 1.5px solid var(--ink); border-radius: 10px; overflow: hidden; }
+.seg input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.seg label {
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  min-height: 48px; padding: 6px 8px; font-weight: 700; line-height: 1.25; cursor: pointer;
+  background: var(--card); word-break: keep-all;
+}
+.seg label ~ label { border-left: 1.5px solid var(--ink); }
+.seg input:checked + label { background: var(--ink); color: var(--bg); }
+.seg input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: -5px; }
+.preset-note { margin: 0; font-size: 0.875rem; color: var(--ink); line-height: 1.5; }
+
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field-label { font-size: 0.875rem; font-weight: 600; color: var(--ink-2); line-height: 1.3; }
+.field-input {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--card); border: 1.5px solid var(--axis); border-radius: 8px; padding: 0 10px;
+}
+.field-input:focus-within { border-color: var(--focus); box-shadow: 0 0 0 2px var(--focus); }
+.field-input input {
+  width: 100%; min-width: 0; border: 0; background: transparent; outline: none;
+  font-size: 1.0625rem; font-weight: 700; padding: 6px 0; font-variant-numeric: tabular-nums;
+}
+.field-input .unit { font-size: 0.8125rem; color: var(--muted); white-space: nowrap; }
+.field.invalid .field-input { border-color: var(--hypo); }
+.field-msg { font-size: 0.8125rem; color: var(--hypo-ink); min-height: 0; line-height: 1.35; }
+.field-msg:empty { display: none; }
+
+.slider { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 2px 10px; }
+.slider label { font-weight: 600; color: var(--ink-2); font-size: 0.9375rem; }
+.slider output { font-weight: 700; font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+.slider output small { font-size: 0.75rem; font-weight: 600; color: var(--muted); margin-left: 3px; }
+.slider input[type="range"] { grid-column: 1 / -1; }
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 32px; background: transparent; margin: 0; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--axis); }
+input[type="range"]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--axis); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--card); border: 3px solid var(--ink); margin-top: -10px;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%; background: var(--card); border: 3px solid var(--ink);
+}
+input[type="range"]#in-mu0::-webkit-slider-thumb, input[type="range"]#in-tau0::-webkit-slider-thumb { border-color: var(--bayes); }
+input[type="range"]#in-mu0::-moz-range-thumb, input[type="range"]#in-tau0::-moz-range-thumb { border-color: var(--bayes); }
+.prior-range { margin: 0; font-size: 0.9375rem; }
+.prior-range b { font-variant-numeric: tabular-nums; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 10px 18px; border: 0; border-radius: 10px;
+  background: var(--btn-bg); color: var(--btn-ink); font-weight: 700; font-size: 1.0625rem; cursor: pointer;
+}
+.btn-primary:hover { filter: brightness(1.15); }
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary svg { width: 20px; height: 20px; flex: none; }
+.btn-text {
+  justify-self: start; background: none; border: 0; padding: 4px 0; cursor: pointer;
+  color: var(--ink); font-weight: 600; font-size: 0.9375rem; text-decoration: underline; text-underline-offset: 3px;
+}
+.seed-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.check { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; min-height: 44px; }
+.check input { width: 22px; height: 22px; accent-color: var(--ink); margin: 0; }
+.seed-field { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1.5px solid var(--axis); border-radius: 8px; padding: 0 10px; }
+.seed-field:focus-within { border-color: var(--focus); box-shadow: 0 0 0 2px var(--focus); }
+.seed-field span[aria-hidden] { color: var(--muted); font-weight: 700; }
+.seed-field input { width: 6.5ch; border: 0; background: transparent; outline: none; font-weight: 700; font-size: 1.0625rem; padding: 8px 0; font-variant-numeric: tabular-nums; }
+.seed-status { margin: 0; font-size: 0.8125rem; line-height: 1.5; color: var(--ink-2); }
+
+/* ---------- 結果 ---------- */
+.results { container-type: inline-size; min-width: 0; display: grid; gap: 44px; }
+.block { display: grid; gap: 14px; min-width: 0; }
+.block h2 { margin: 0; font-size: 1.4rem; line-height: 1.3; text-wrap: balance; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px 28px; min-width: 0; }
+@container (min-width: 660px) {
+  .pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.takeaway {
+  margin: 0; font-size: 1.25rem; line-height: 1.55; font-weight: 500; max-width: 44em;
+  text-wrap: pretty;
+}
+.takeaway strong { font-weight: 700; }
+
+.method {
+  border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; background: var(--card);
+  display: grid; gap: 12px; align-content: start; min-width: 0;
+}
+.method-head { display: flex; align-items: center; gap: 12px; }
+.method-head h3 { margin: 0; font-size: 1.375rem; }
+.key { display: inline-block; position: relative; width: 26px; height: 3px; border-radius: 2px; flex: none; }
+.key::after { content: ""; position: absolute; left: 50%; top: 50%; width: 11px; height: 11px; border-radius: 50%; transform: translate(-50%, -50%); background: inherit; box-shadow: 0 0 0 2px var(--card); }
+.key.fixed { background: var(--fixed); }
+.key.bayes { background: var(--bayes); }
+.rule { margin: 0; font-size: 0.975rem; color: var(--ink); }
+.rule b { font-weight: 700; white-space: nowrap; }
+.stats { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.stat { min-width: 0; }
+.stat dt { font-size: 0.875rem; font-weight: 600; color: var(--ink-2); }
+.stat dd { margin: 0; }
+.stat .big { display: block; font-size: clamp(1.9rem, 1.3rem + 1.4vw, 2.6rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+.stat .big small { font-size: 0.5em; font-weight: 600; margin-left: 3px; color: var(--ink-2); }
+.state { display: flex; align-items: flex-start; gap: 6px; margin: 4px 0 0; font-size: 0.875rem; line-height: 1.4; color: var(--ink-2); }
+.state svg { width: 16px; height: 16px; flex: none; margin-top: 1px; }
+.state.ok svg { color: var(--target-ink); }
+.state.bad svg { color: var(--hypo); }
+.state.pending svg { color: var(--muted); }
+.substats { margin: 0; font-size: 0.9375rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.substats b { color: var(--ink); }
+.footnote { margin: 0; font-size: 0.8125rem; color: var(--muted); line-height: 1.5; }
+
+/* 圖表 */
+.chart { margin: 0; min-width: 0; display: grid; gap: 6px; }
+.chart figcaption { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.0625rem; flex-wrap: wrap; }
+.chart figcaption .cap-note { font-weight: 500; font-size: 0.875rem; color: var(--ink-2); }
+.plot { position: relative; min-width: 0; touch-action: pan-y; border-radius: 6px; }
+.plot svg { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font-body); font-variant-numeric: tabular-nums; }
+.plot .grid { stroke: var(--line); stroke-width: 1; }
+.plot .axis { stroke: var(--axis); stroke-width: 1; }
+.plot .sep { stroke: var(--line); stroke-width: 1; }
+.plot .zero { stroke: var(--axis); stroke-width: 1.5; }
+.plot .tick { fill: var(--muted); }
+.plot .unit { fill: var(--ink-2); font-weight: 600; }
+.plot .halo { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+.plot .band-target { fill: var(--target-wash); }
+.plot .band-label { fill: var(--target-ink); font-weight: 700; }
+.plot .hypo-line { stroke: var(--hypo); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.plot .hypo-label, .plot .hypo-val { fill: var(--hypo-ink); font-weight: 700; }
+.plot .trace { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; opacity: 0.55; }
+.plot .avg { stroke-width: 9; stroke-linecap: round; opacity: 0.2; }
+.plot .dot { stroke: var(--bg); stroke-width: 2; }
+.plot .tri { fill: var(--hypo); stroke: var(--bg); stroke-width: 2; stroke-linejoin: round; }
+.plot .step { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.plot .dose-label { fill: var(--ink); font-weight: 700; }
+.plot .post-band { fill: var(--bayes-wash); }
+.plot .post-line { fill: none; stroke: var(--bayes); stroke-width: 2.5; stroke-linejoin: round; }
+.plot .truth { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 8 6; }
+.plot .truth-label { fill: var(--ink); font-weight: 700; }
+.plot .cross { stroke: var(--ink-2); stroke-width: 1; }
+.plot .hover-dot { fill: var(--bg); stroke-width: 3; }
+.plot .fixed.trace, .plot .fixed.step, .plot .fixed.avg, .plot .fixed.hover-dot { stroke: var(--fixed); }
+.plot .bayes.trace, .plot .bayes.step, .plot .bayes.avg, .plot .bayes.hover-dot { stroke: var(--bayes); }
+.plot .fixed.dot { fill: var(--fixed); }
+.plot .bayes.dot { fill: var(--bayes); }
+.plot .fixed.area { fill: var(--fixed-wash); }
+.plot .bayes.area { fill: var(--bayes-wash); }
+.tip {
+  position: absolute; z-index: 3; pointer-events: none;
+  background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px 10px; font-size: 0.875rem; line-height: 1.35; box-shadow: var(--shadow); white-space: nowrap;
+}
+.tip strong { font-size: 1.125rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tip .tip-unit { color: var(--ink-2); margin-left: 3px; }
+.tip .tip-sub { display: block; color: var(--ink-2); font-size: 0.8125rem; }
+.tip .tip-low { color: var(--hypo-ink); font-weight: 700; margin-left: 6px; }
+.post-caption { margin: 0; font-size: 0.975rem; }
+.post-caption .cover { font-weight: 700; }
+.post-caption .cover.ok { color: var(--target-ink); }
+.post-caption .cover.bad { color: var(--hypo-ink); }
+.assume { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; font-size: 0.9375rem; color: var(--ink-2); max-width: 52em; }
+.assume-title { margin: 6px 0 0; font-weight: 700; font-size: 1rem; }
+
+/* 決策紀錄 */
+.log summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+.log summary::-webkit-details-marker { display: none; }
+.log summary::before {
+  content: ""; width: 0.6em; height: 0.6em; flex: none;
+  border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink);
+  transform: rotate(-45deg); transition: transform 0.15s;
+}
+.log[open] summary::before { transform: rotate(45deg); }
+.log summary h2 { margin: 0; font-size: 1.4rem; }
+.log summary .hint { font-size: 0.875rem; color: var(--muted); font-weight: 600; }
+.log-body { display: grid; gap: 14px; padding-top: 8px; }
+.log-tables { display: grid; gap: 18px; min-width: 0; }
+.table-wrap { overflow-x: auto; min-width: 0; border: 1px solid var(--line); border-radius: 10px; }
+.table-title { display: flex; align-items: center; gap: 10px; font-weight: 700; padding: 10px 12px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.8125rem; color: var(--ink-2); font-weight: 700; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num { white-space: nowrap; }
+td .lowv { color: var(--hypo-ink); font-weight: 700; }
+td .note { display: block; color: var(--muted); font-size: 0.8125rem; }
+
+/* 底部固定聲明 */
+.disclaimer {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  min-height: var(--footer-h);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding-top: 8px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--caution-bg); color: var(--caution-ink);
+  border-top: 2px solid var(--caution-line);
+  font-weight: 700; font-size: 1rem; line-height: 1.4; text-align: center;
+}
+.disclaimer svg { width: 22px; height: 22px; flex: none; }
+
+@media (max-width: 480px) {
+  table { font-size: 0.8125rem; }
+  th, td { padding: 7px 8px; }
+  th { white-space: normal; }
+  .rail { padding: 14px; }
+  .method { padding: 16px; }
+  .takeaway { font-size: 1.125rem; }
+  .disclaimer { font-size: clamp(12px, 3.6vw, 15px); gap: 8px; text-wrap: balance; }
+  .disclaimer svg { width: 18px; height: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <ul class="eyebrow" aria-label="頁面性質">
+      <li>教學模擬</li>
+      <li>全部為模擬資料</li>
+      <li>非臨床決策工具</li>
+      <li>本頁不儲存任何資料</li>
+    </ul>
+    <h1>基礎胰島素滴定：<wbr>固定規則 <span class="vs">vs</span> 貝氏方法</h1>
+    <p class="lede">同一位虛擬病人、同一組每日血糖起伏，比較兩種調整基礎胰島素的方法：誰比較快把空腹血糖帶進目標、誰比較少低血糖。</p>
+  </header>
+
+  <div class="layout">
+    <aside class="rail" aria-label="模擬設定">
+      <section class="group" aria-labelledby="g-patient">
+        <h2 class="group-title" id="g-patient">虛擬病人</h2>
+        <div class="seg" role="radiogroup" aria-label="選擇虛擬病人">
+          <input type="radio" name="preset" id="preset-sensitive" value="sensitive" checked>
+          <label for="preset-sensitive">胰島素<wbr>敏感型</label>
+          <input type="radio" name="preset" id="preset-resistant" value="resistant">
+          <label for="preset-resistant">胰島素<wbr>阻抗型</label>
+          <input type="radio" name="preset" id="preset-custom" value="custom">
+          <label for="preset-custom">自訂</label>
+        </div>
+        <p class="preset-note" id="preset-note">每多打 1U，空腹血糖約降 5 mg/dL。需要的劑量少，加太快容易低血糖。</p>
+        <div class="fields">
+          <label class="field" for="in-d0">
+            <span class="field-label">起始劑量</span>
+            <span class="field-input"><input id="in-d0" type="number" inputmode="numeric" min="0" max="100" step="1" value="10"><span class="unit">U</span></span>
+            <span class="field-msg" id="msg-d0" aria-live="polite"></span>
+          </label>
+          <label class="field" for="in-g0">
+            <span class="field-label">起始空腹血糖</span>
+            <span class="field-input"><input id="in-g0" type="number" inputmode="numeric" min="60" max="400" step="1" value="160"><span class="unit">mg/dL</span></span>
+            <span class="field-msg" id="msg-g0" aria-live="polite"></span>
+          </label>
+          <label class="field" for="in-S">
+            <span class="field-label">真實敏感度</span>
+            <span class="field-input"><input id="in-S" type="number" inputmode="decimal" min="0.1" max="30" step="0.1" value="5"><span class="unit">mg/dL 每 U</span></span>
+            <span class="field-msg" id="msg-S" aria-live="polite"></span>
+          </label>
+          <label class="field" for="in-sigma">
+            <span class="field-label">每日波動（標準差）</span>
+            <span class="field-input"><input id="in-sigma" type="number" inputmode="numeric" min="0" max="40" step="1" value="15"><span class="unit">mg/dL</span></span>
+            <span class="field-msg" id="msg-sigma" aria-live="polite"></span>
+          </label>
+        </div>
+        <p class="plain">「真實敏感度」是每多打 1 單位，空腹血糖平均會降多少。這個答案只有模擬器知道，兩種方法都得從血糖反應去推測。</p>
+      </section>
+
+      <section class="group" aria-labelledby="g-sim">
+        <h2 class="group-title" id="g-sim">模擬</h2>
+        <button type="button" class="btn-primary" id="btn-rerun">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+          重新模擬
+        </button>
+        <div class="seed-row">
+          <label class="check" for="in-fixseed"><input type="checkbox" id="in-fixseed" checked>固定隨機種子</label>
+          <label class="seed-field" for="in-seed"><span aria-hidden="true">#</span><span class="sr-only">種子號碼</span><input id="in-seed" type="number" inputmode="numeric" min="1" max="999999" step="1" value="2026"></label>
+        </div>
+        <p class="seed-status" id="seed-status" aria-live="polite">種子 2026 已固定：重新整理或按「重新模擬」都會得到同一結果。</p>
+        <div class="slider">
+          <label for="in-days">模擬天數</label>
+          <output id="out-days" for="in-days">21<small>天</small></output>
+          <input type="range" id="in-days" min="14" max="21" step="1" value="21">
+        </div>
+        <p class="plain">每天的血糖都會隨機起伏。「重新模擬」會換一組起伏；勾選「固定隨機種子」並記下號碼，演講時就能重現同一個結果。</p>
+      </section>
+      <section class="group" aria-labelledby="g-prior">
+        <h2 class="group-title" id="g-prior">貝氏先驗 <span class="tag">只影響貝氏方法</span></h2>
+        <div class="slider">
+          <label for="in-mu0">先驗平均（猜這位病人每 1U 降多少）</label>
+          <output id="out-mu0" for="in-mu0">3.0</output>
+          <input type="range" id="in-mu0" min="0.5" max="10" step="0.1" value="3">
+        </div>
+        <div class="slider">
+          <label for="in-tau0">先驗標準差（有多不確定）</label>
+          <output id="out-tau0" for="in-tau0">2.0</output>
+          <input type="range" id="in-tau0" min="0.2" max="5" step="0.1" value="2">
+        </div>
+        <p class="prior-range" id="prior-range">先驗 95% 範圍：<b>−0.9 ～ 6.9</b> mg/dL 每 U</p>
+        <button type="button" class="btn-text" id="btn-prior-reset">恢復預設（3.0 ± 2.0）</button>
+        <p class="plain">先驗是還沒看到這位病人數據前的「初步猜測」。標準差越大代表越沒把握，第一次加量就會越保守。</p>
+      </section>
+
+    </aside>
+
+    <main class="results" id="results">
+      <section class="block" aria-labelledby="h-summary">
+        <h2 id="h-summary">結果摘要</h2>
+        <p class="takeaway" id="takeaway">正在模擬…</p>
+        <div class="pair">
+          <article class="method" aria-labelledby="m-fixed">
+            <div class="method-head"><span class="key fixed" aria-hidden="true"></span><h3 id="m-fixed">固定規則</h3></div>
+            <p class="rule">每 3 天看一次：任一天 <b>&lt;70 → 減 10%</b>（取整數）；否則 3 天平均 <b>&gt;130 → 加 2U</b>、<b>80–130 → 維持</b>。</p>
+            <dl class="stats">
+              <div class="stat"><dt>達標</dt><dd><span class="big" id="f-target">—</span><span class="state" id="f-target-state"></span></dd></div>
+              <div class="stat"><dt>低血糖（&lt;70）</dt><dd><span class="big" id="f-lows">—</span><span class="state" id="f-lows-state"></span></dd></div>
+            </dl>
+            <p class="substats" id="f-sub"></p>
+            <p class="footnote">同時有高血糖與低血糖時，以低血糖優先（減量）。小劑量減 10% 取整後若沒變，至少減 1U。3 天平均 70–79 且沒有任一天 &lt;70：原規則未定義，本模擬維持劑量。</p>
+          </article>
+          <article class="method" aria-labelledby="m-bayes">
+            <div class="method-head"><span class="key bayes" aria-hidden="true"></span><h3 id="m-bayes">貝氏方法</h3></div>
+            <p class="rule">每天用新數據更新「每 1U 降多少」的估計；每 3 天，在 <b>預測 &lt;70 機率 &lt;5%</b> 的劑量中，選 <b>預測落在 80–130 機率最高</b> 的整數劑量。</p>
+            <dl class="stats">
+              <div class="stat"><dt>達標</dt><dd><span class="big" id="b-target">—</span><span class="state" id="b-target-state"></span></dd></div>
+              <div class="stat"><dt>低血糖（&lt;70）</dt><dd><span class="big" id="b-lows">—</span><span class="state" id="b-lows-state"></span></dd></div>
+            </dl>
+            <p class="substats" id="b-sub"></p>
+            <p class="footnote">安全護欄：前 3 天若有任一天 &lt;70，這次不加量。劑量搜尋範圍 0–200U。</p>
+          </article>
+        </div>
+        <p class="plain">「達標」是指某一次的 3 天平均落在 80–130，而且那 3 天沒有任何一天低於 70。兩種方法看到的每日起伏完全相同，差別只在調劑量的方式。</p>
+      </section>
+
+      <section class="block" aria-labelledby="h-glucose">
+        <h2 id="h-glucose">每日空腹血糖</h2>
+        <p class="plain">綠色帶是目標 80–130 mg/dL，紅色虛線是 70；紅色三角形代表那天低血糖。淡色粗橫線是每 3 天的平均，固定規則就是看它來調整。</p>
+        <div class="pair">
+          <figure class="chart" id="c-glu-fixed"><figcaption><span class="key fixed" aria-hidden="true"></span>固定規則</figcaption><div class="plot" tabindex="0"></div></figure>
+          <figure class="chart" id="c-glu-bayes"><figcaption><span class="key bayes" aria-hidden="true"></span>貝氏方法</figcaption><div class="plot" tabindex="0"></div></figure>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="h-dose">
+        <h2 id="h-dose">每日基礎胰島素劑量</h2>
+        <p class="plain">固定規則每次最多只加 2U；貝氏方法一旦估計出這位病人「每 1U 降多少」，就一次調到它算出來的劑量。</p>
+        <div class="pair">
+          <figure class="chart" id="c-dose-fixed"><figcaption><span class="key fixed" aria-hidden="true"></span>固定規則</figcaption><div class="plot" tabindex="0"></div></figure>
+          <figure class="chart" id="c-dose-bayes"><figcaption><span class="key bayes" aria-hidden="true"></span>貝氏方法</figcaption><div class="plot" tabindex="0"></div></figure>
+        </div>
+      </section>
+
+      <section class="block" aria-labelledby="h-post">
+        <h2 id="h-post">貝氏方法：敏感度的估計如何收斂</h2>
+        <p class="plain">前 3 天劑量沒變，分不出「血糖高是劑量不夠」還是「病人本來就高」，所以估計停在先驗；開始調劑量後，橘色帶（95% 可能範圍）越來越窄，並靠近虛線的真實值。</p>
+        <figure class="chart" id="c-post"><figcaption><span class="key bayes" aria-hidden="true"></span>估計的敏感度（mg/dL 每 U）<span class="cap-note">實線＝目前估計、色帶＝95% 範圍、虛線＝真實值</span></figcaption><div class="plot" tabindex="0"></div></figure>
+        <p class="post-caption" id="post-caption"></p>
+        <p class="assume-title">這個貝氏模型的假設</p>
+        <ul class="assume">
+          <li>空腹血糖和劑量成直線關係：每多 1U，平均下降固定的量（敏感度），而且這段期間不會改變。</li>
+          <li>劑量改變後，隔天的空腹血糖就反映新劑量的完整效果。</li>
+          <li>每天的起伏是彼此獨立的常態分布，大小（標準差）已知。</li>
+          <li>病人原本的血糖水準不先猜，直接由實測決定；要猜的只有敏感度。</li>
+        </ul>
+      </section>
+
+      <section class="block" aria-label="決策紀錄">
+        <details class="log" id="log">
+          <summary><h2>決策紀錄：每 3 天怎麼決定</h2><span class="hint">點開</span></summary>
+          <div class="log-body">
+            <p class="plain">固定規則只看「3 天平均」和「有沒有低於 70」；貝氏方法用全部數據算出敏感度的估計，再預測每個劑量落在目標和低於 70 的機率。</p>
+            <div class="log-tables">
+              <div class="table-wrap">
+                <div class="table-title"><span class="key fixed" aria-hidden="true"></span>固定規則</div>
+                <table id="t-fixed"><thead><tr><th>期間</th><th>3 天空腹血糖（平均）</th><th>判斷 → 下一期劑量</th></tr></thead><tbody></tbody></table>
+              </div>
+              <div class="table-wrap">
+                <div class="table-title"><span class="key bayes" aria-hidden="true"></span>貝氏方法</div>
+                <table id="t-bayes"><thead><tr><th>期間</th><th>3 天空腹血糖（平均）</th><th>估計敏感度（95% 範圍）</th><th>下一期劑量（預測：達標／&lt;70）</th></tr></thead><tbody></tbody></table>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+    </main>
+  </div>
+</div>
+
+<footer class="disclaimer" role="note">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><path d="M12 17.2v.1"/></svg>
+  <span>教學模擬，未經臨床驗證，實際劑量請依醫師指示</span>
+</footer>
+
+<script>
+/* ENGINE-BEGIN */
+const Engine = (() => {
+  'use strict';
+  // 臨床門檻（mg/dL）
+  const TARGET_LO = 80, TARGET_HI = 130, HYPO = 70, HYPO_L2 = 54;
+  const BLOCK = 3;            // 每 3 天調整一次
+  const MAX_DAYS = 21;        // 雜訊一次產生 21 天，改天數不會改變前面的波動
+  const DOSE_MAX = 200;       // 貝氏方法搜尋的劑量上限（U）
+  const OBS_MIN = 40, OBS_MAX = 600; // 血糖機可顯示範圍（模擬用）
+  const P_LOW_LIMIT = 0.05;   // 預測 <70 的機率上限
+
+  // ---- 亂數：mulberry32 + Box-Muller（可重現） ----
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function makeNoise(seed, n = MAX_DAYS) {
+    const rng = mulberry32(seed);
+    const z = [];
+    while (z.length < n) {
+      let u = rng();
+      while (u <= 1e-12) u = rng();
+      const v = rng();
+      const r = Math.sqrt(-2 * Math.log(u));
+      z.push(r * Math.cos(2 * Math.PI * v));
+      if (z.length < n) z.push(r * Math.sin(2 * Math.PI * v));
+    }
+    return z;
+  }
+
+  // ---- 常態分布 CDF（Abramowitz–Stegun 7.1.26，誤差 < 1.5e-7） ----
+  function erf(x) {
+    const s = x < 0 ? -1 : 1;
+    const ax = Math.abs(x);
+    const t = 1 / (1 + 0.3275911 * ax);
+    const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-ax * ax);
+    return s * y;
+  }
+  const Phi = (z) => 0.5 * (1 + erf(z / Math.SQRT2));
+
+  const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+
+  // ---- 虛擬病人（真實模型，只有模擬器知道） ----
+  // 空腹血糖平均 = 起始血糖 − 真實敏感度 ×（當天劑量 − 起始劑量）
+  function trueMean(p, dose) { return p.g0 - p.S * (dose - p.d0); }
+  function observe(p, dose, z) {
+    const raw = trueMean(p, dose) + p.sigma * z;
+    return Math.min(OBS_MAX, Math.max(OBS_MIN, Math.round(raw)));
+  }
+
+  // ---- 固定規則 ----
+  function reduce10(d) {
+    if (d <= 0) return 0;
+    let n = Math.round(d * 9 / 10);      // 減 10% 後四捨五入
+    if (n >= d) n = d - 1;               // 小劑量時取整後沒變，至少減 1U
+    return Math.max(0, n);
+  }
+  function fixedDecide(block, dose) {
+    const avg = mean(block);
+    const anyLow = block.some((v) => v < HYPO);
+    if (anyLow) return { next: reduce10(dose), code: 'low', avg };
+    if (avg > TARGET_HI) return { next: dose + 2, code: 'up', avg };
+    if (avg >= TARGET_LO) return { next: dose, code: 'hold', avg };
+    return { next: dose, code: 'gap', avg }; // 平均 70–79 且無單次 <70：原規則未定義，維持
+  }
+
+  // ---- 貝氏模型 ----
+  // y = A − S ×（劑量 − 起始劑量）+ ε，ε ~ N(0, σ²)，σ 已知
+  // A：起始劑量下的平均空腹血糖（幾乎無資訊的先驗）；S：敏感度 ~ N(μ0, τ0²)
+  function makePosterior(mu0, tau0) {
+    const epsA = 1e-10;               // A 的先驗精確度（≈ 平坦）
+    return {
+      L: [[epsA, 0], [0, 1 / (tau0 * tau0)]],  // 精確度矩陣
+      b: [0, mu0 / (tau0 * tau0)],             // 精確度 × 平均
+    };
+  }
+  function postUpdate(post, x, y, sigma) {
+    const w = 1 / (sigma * sigma);
+    post.L[0][0] += w * x[0] * x[0];
+    post.L[0][1] += w * x[0] * x[1];
+    post.L[1][0] += w * x[1] * x[0];
+    post.L[1][1] += w * x[1] * x[1];
+    post.b[0] += w * x[0] * y;
+    post.b[1] += w * x[1] * y;
+  }
+  function postSolve(post) {
+    const [[a, b], [c, d]] = post.L;
+    const det = a * d - b * c;
+    const V = [[d / det, -b / det], [-c / det, a / det]];
+    const m = [V[0][0] * post.b[0] + V[0][1] * post.b[1], V[1][0] * post.b[0] + V[1][1] * post.b[1]];
+    return { m, V };
+  }
+  function predict(sol, d0, dose, sigma) {
+    const dx = dose - d0;
+    const mu = sol.m[0] - sol.m[1] * dx;
+    const varParam = sol.V[0][0] - 2 * dx * sol.V[0][1] + dx * dx * sol.V[1][1];
+    const sd = Math.sqrt(Math.max(0, varParam) + sigma * sigma);
+    return {
+      mu, sd,
+      pLow: Phi((HYPO - mu) / sd),
+      pIn: Phi((TARGET_HI - mu) / sd) - Phi((TARGET_LO - mu) / sd),
+    };
+  }
+  function bayesRecommend(sol, d0, curDose, sigma, hadLow) {
+    const cands = [];
+    for (let d = 0; d <= DOSE_MAX; d++) {
+      if (hadLow && d > curDose) break;   // 安全護欄：前一期有 <70 就不加量
+      cands.push({ dose: d, ...predict(sol, d0, d, sigma) });
+    }
+    const safe = cands.filter((c) => c.pLow < P_LOW_LIMIT);
+    let pick;
+    if (safe.length) {
+      const center = (TARGET_LO + TARGET_HI) / 2;
+      const maxIn = Math.max(...safe.map((c) => c.pIn));
+      if (maxIn < 1e-6) {
+        // 每個安全劑量都幾乎不可能落在範圍內：選預測值最接近目標中心者（避免平手時掉到 0U）
+        pick = safe.reduce((best, c) => (Math.abs(c.mu - center) < Math.abs(best.mu - center) ? c : best), safe[0]);
+      } else {
+        pick = safe.reduce((best, c) => {
+          if (c.pIn > best.pIn + 1e-12) return c;
+          if (Math.abs(c.pIn - best.pIn) <= 1e-12 && Math.abs(c.mu - center) < Math.abs(best.mu - center)) return c;
+          return best;
+        }, safe[0]);
+      }
+      pick = { ...pick, reason: 'best' };
+    } else {
+      pick = cands.reduce((best, c) => (c.pLow < best.pLow - 1e-12 ? c : best), cands[0]);
+      pick = { ...pick, reason: 'none-safe' };
+    }
+    pick.guard = !!hadLow;
+    return pick;
+  }
+
+  // ---- 執行一次模擬 ----
+  function simulate(cfg) {
+    // cfg: { patient: {d0, g0, S, sigma}, prior: {mu0, tau0}, days, seed }
+    const p = cfg.patient;
+    const N = cfg.days;
+    const z = makeNoise(cfg.seed, MAX_DAYS);
+    const sigmaModel = Math.max(1, p.sigma); // 貝氏模型假設已知的每日波動
+
+    // 固定規則
+    const fixed = { dose: [], obs: [], log: [] };
+    let dose = p.d0;
+    for (let t = 1; t <= N; t++) {
+      fixed.dose.push(dose);
+      fixed.obs.push(observe(p, dose, z[t - 1]));
+      if (t % BLOCK === 0) {
+        const block = fixed.obs.slice(t - BLOCK, t);
+        const dec = fixedDecide(block, dose);
+        fixed.log.push({ day: t, block, avg: dec.avg, code: dec.code, from: dose, to: dec.next, final: t === N });
+        dose = dec.next;
+      }
+    }
+
+    // 貝氏方法
+    const bayes = { dose: [], obs: [], log: [], post: [{ day: 0, mean: cfg.prior.mu0, sd: cfg.prior.tau0 }] };
+    const post = makePosterior(cfg.prior.mu0, cfg.prior.tau0);
+    dose = p.d0;
+    for (let t = 1; t <= N; t++) {
+      bayes.dose.push(dose);
+      const y = observe(p, dose, z[t - 1]);
+      bayes.obs.push(y);
+      postUpdate(post, [1, -(dose - p.d0)], y, sigmaModel);
+      const sol = postSolve(post);
+      bayes.post.push({ day: t, mean: sol.m[1], sd: Math.sqrt(Math.max(0, sol.V[1][1])) });
+      if (t % BLOCK === 0) {
+        const block = bayes.obs.slice(t - BLOCK, t);
+        const hadLow = block.some((v) => v < HYPO);
+        const rec = bayesRecommend(sol, p.d0, dose, sigmaModel, hadLow);
+        bayes.log.push({
+          day: t, block, avg: mean(block), from: dose, to: rec.dose, final: t === N,
+          estMean: sol.m[1], estSd: Math.sqrt(Math.max(0, sol.V[1][1])),
+          predMu: rec.mu, predSd: rec.sd, pLow: rec.pLow, pIn: rec.pIn, reason: rec.reason, guard: rec.guard,
+        });
+        dose = rec.dose;
+      }
+    }
+
+    for (const arm of [fixed, bayes]) arm.summary = summarize(arm, N);
+    return { fixed, bayes, z, days: N };
+  }
+
+  function summarize(arm, N) {
+    let targetDay = null;
+    for (let t = BLOCK; t <= N; t += BLOCK) {
+      const b = arm.obs.slice(t - BLOCK, t);
+      const a = mean(b);
+      if (b.every((v) => v >= HYPO) && a >= TARGET_LO && a <= TARGET_HI) { targetDay = t; break; }
+    }
+    const lows = arm.obs.filter((v) => v < HYPO).length;
+    const lows2 = arm.obs.filter((v) => v < HYPO_L2).length;
+    const inRange = arm.obs.filter((v) => v >= TARGET_LO && v <= TARGET_HI).length;
+    const last = arm.obs.slice(-BLOCK);
+    return { targetDay, lows, lows2, inRange, finalDose: arm.dose[N - 1], lastAvg: mean(last) };
+  }
+
+  return {
+    TARGET_LO, TARGET_HI, HYPO, HYPO_L2, BLOCK, MAX_DAYS, DOSE_MAX, OBS_MIN, OBS_MAX, P_LOW_LIMIT,
+    mulberry32, makeNoise, Phi, erf, trueMean, observe, reduce10, fixedDecide,
+    makePosterior, postUpdate, postSolve, predict, bayesRecommend, simulate, summarize, mean,
+  };
+})();
+/* ENGINE-END */
+
+(() => {
+  'use strict';
+  document.documentElement.lang = 'zh-Hant';
+  const E = Engine;
+  const $ = (s, root = document) => root.querySelector(s);
+
+  // ---------- 設定 ----------
+  const PRESETS = {
+    sensitive: { d0: 10, g0: 160, S: 5, sigma: 15, note: '每多打 1U，空腹血糖約降 5 mg/dL。需要的劑量少，加太快容易低血糖。' },
+    resistant: { d0: 10, g0: 230, S: 1.5, sigma: 15, note: '每多打 1U，空腹血糖只降約 1.5 mg/dL。需要的劑量多，每次只加 2U 要爬很久。' },
+  };
+  const CUSTOM_NOTE = '自行輸入下面四個數值；修改任何一格都會自動切到「自訂」。';
+  const PRIOR_DEFAULT = { mu0: 3, tau0: 2 };
+  const DEFAULT_SEED = 2026;
+  const LIMITS = {
+    d0: { min: 0, max: 100, int: true, label: '起始劑量', unit: 'U' },
+    g0: { min: 60, max: 400, int: true, label: '起始空腹血糖', unit: 'mg/dL' },
+    S: { min: 0.1, max: 30, int: false, label: '真實敏感度', unit: 'mg/dL 每 U' },
+    sigma: { min: 0, max: 40, int: true, label: '每日波動', unit: 'mg/dL' },
+  };
+  const NAMES = { fixed: '固定規則', bayes: '貝氏方法' };
+
+  const state = {
+    preset: 'sensitive',
+    patient: pickPatient(PRESETS.sensitive),
+    prior: { ...PRIOR_DEFAULT },
+    days: 21,
+    seed: DEFAULT_SEED,
+    fixSeed: true,
+    result: null,
+  };
+  function pickPatient(p) { return { d0: p.d0, g0: p.g0, S: p.S, sigma: p.sigma }; }
+
+  // ---------- 數字格式 ----------
+  const minus = (s) => s.replace(/^-/, '−');
+  const f1 = (v) => { const r = Math.round(v * 10) / 10; return minus((Object.is(r, -0) || Math.abs(r) < 0.05 ? 0 : r).toFixed(1)); };
+  const fInt = (v) => minus(String(Math.round(v)));
+  const pct = (p) => {
+    if (p < 0.001) return '<0.1%';
+    if (p > 0.999) return '>99.9%';
+    return (p * 100).toFixed(p < 0.1 ? 1 : 0) + '%';
+  };
+  const fmtS = (v) => (Number.isInteger(v) ? String(v) : f1(v));
+
+  // ---------- 表單 ----------
+  const inputs = { d0: $('#in-d0'), g0: $('#in-g0'), S: $('#in-S'), sigma: $('#in-sigma') };
+  const msgs = { d0: $('#msg-d0'), g0: $('#msg-g0'), S: $('#msg-S'), sigma: $('#msg-sigma') };
+
+  function setMsg(k, text, isError = false) {
+    msgs[k].textContent = text || '';
+    inputs[k].closest('.field').classList.toggle('invalid', !!text && isError);
+  }
+  function parseField(k) {
+    const lim = LIMITS[k];
+    const raw = inputs[k].value.trim();
+    if (raw === '') return { ok: false, msg: `請輸入${lim.label}` };
+    const v = Number(raw);
+    if (!Number.isFinite(v)) return { ok: false, msg: '請輸入數字' };
+    if (v < lim.min) {
+      const why = k === 'd0' ? '劑量不可為負值' : k === 'S' ? '敏感度必須大於 0' : `最小 ${lim.min} ${lim.unit}`;
+      return { ok: false, msg: why, clamp: lim.min };
+    }
+    if (v > lim.max) return { ok: false, msg: `最大 ${lim.max} ${lim.unit}`, clamp: lim.max };
+    const value = lim.int ? Math.round(v) : Math.round(v * 10) / 10;
+    return { ok: true, value, rounded: value !== v };
+  }
+  function syncPresetUI() {
+    $(`#preset-${state.preset}`).checked = true;
+    $('#preset-note').textContent = state.preset === 'custom' ? CUSTOM_NOTE : PRESETS[state.preset].note;
+  }
+  function writeFields() {
+    for (const k in inputs) { inputs[k].value = state.patient[k]; setMsg(k, ''); }
+  }
+  function markCustomIfChanged() {
+    if (state.preset === 'custom') return;
+    const p = PRESETS[state.preset];
+    if (Object.keys(inputs).some((k) => state.patient[k] !== p[k])) { state.preset = 'custom'; syncPresetUI(); }
+  }
+  for (const k of Object.keys(inputs)) {
+    inputs[k].addEventListener('input', () => {
+      const r = parseField(k);
+      if (!r.ok) { setMsg(k, r.msg, true); return; }
+      setMsg(k, '');
+      if (state.patient[k] === r.value) return;
+      state.patient[k] = r.value;
+      markCustomIfChanged();
+      schedule();
+    });
+    inputs[k].addEventListener('change', () => {
+      const r = parseField(k);
+      if (r.ok) {
+        if (r.rounded) { inputs[k].value = r.value; setMsg(k, `已取到 ${LIMITS[k].int ? '整數' : '小數一位'}：${r.value}`); }
+        return;
+      }
+      if (r.clamp !== undefined) {
+        inputs[k].value = r.clamp;
+        state.patient[k] = r.clamp;
+        setMsg(k, `${r.msg}，已改為 ${r.clamp}`);
+        markCustomIfChanged();
+        schedule();
+      } else {
+        inputs[k].value = state.patient[k];
+        setMsg(k, `已恢復為 ${state.patient[k]}`);
+      }
+    });
+  }
+  document.querySelectorAll('input[name="preset"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      state.preset = radio.value;
+      if (state.preset !== 'custom') { state.patient = pickPatient(PRESETS[state.preset]); writeFields(); }
+      syncPresetUI();
+      if (state.preset === 'custom') inputs.S.focus({ preventScroll: true });
+      schedule();
+    });
+  });
+
+  // 先驗
+  const mu0In = $('#in-mu0'), tau0In = $('#in-tau0');
+  function syncPriorUI() {
+    mu0In.value = state.prior.mu0; tau0In.value = state.prior.tau0;
+    $('#out-mu0').textContent = f1(state.prior.mu0);
+    $('#out-tau0').textContent = f1(state.prior.tau0);
+    const lo = state.prior.mu0 - 1.96 * state.prior.tau0, hi = state.prior.mu0 + 1.96 * state.prior.tau0;
+    const pr = $('#prior-range');
+    pr.textContent = '先驗 95% 範圍：';
+    const b = document.createElement('b'); b.textContent = `${f1(lo)} ～ ${f1(hi)}`;
+    pr.append(b, ' mg/dL 每 U');
+  }
+  mu0In.addEventListener('input', () => { state.prior.mu0 = Number(mu0In.value); syncPriorUI(); schedule(); });
+  tau0In.addEventListener('input', () => { state.prior.tau0 = Number(tau0In.value); syncPriorUI(); schedule(); });
+  $('#btn-prior-reset').addEventListener('click', () => { state.prior = { ...PRIOR_DEFAULT }; syncPriorUI(); schedule(); });
+
+  // 天數
+  const daysIn = $('#in-days');
+  function syncDaysUI() {
+    const out = $('#out-days'); out.textContent = String(state.days);
+    const s = document.createElement('small'); s.textContent = '天'; out.append(s);
+  }
+  daysIn.addEventListener('input', () => { state.days = Number(daysIn.value); syncDaysUI(); schedule(); });
+
+  // 種子
+  const seedIn = $('#in-seed'), fixIn = $('#in-fixseed'), seedStatus = $('#seed-status');
+  function seedMessage(kind) {
+    const s = state.seed;
+    if (kind === 'rerun-fixed') return `種子 #${s} 已固定，所以結果和上次相同。要換一組起伏，請先取消勾選「固定隨機種子」。`;
+    if (kind === 'rerun-new') return `已換一組新的隨機起伏（種子 #${s}）。想重現這次結果：勾選「固定隨機種子」，並記下號碼。`;
+    if (kind === 'typed') return `改用種子 #${s}。`;
+    return state.fixSeed
+      ? `種子 #${s} 已固定：按「重新模擬」會得到同一結果。重新整理頁面會回到預設種子 #${DEFAULT_SEED}。`
+      : `未固定：每按一次「重新模擬」就換一組起伏（目前種子 #${s}）。`;
+  }
+  function randomSeed() {
+    try { return (crypto.getRandomValues(new Uint32Array(1))[0] % 999999) + 1; }
+    catch (e) { return Math.floor(Math.random() * 999999) + 1; }
+  }
+  $('#btn-rerun').addEventListener('click', () => {
+    if (state.fixSeed) {
+      run();
+      seedStatus.textContent = seedMessage('rerun-fixed');
+    } else {
+      let s = randomSeed();
+      if (s === state.seed) s = (s % 999999) + 1;
+      state.seed = s; seedIn.value = s;
+      run();
+      seedStatus.textContent = seedMessage('rerun-new');
+    }
+  });
+  fixIn.addEventListener('change', () => { state.fixSeed = fixIn.checked; seedStatus.textContent = seedMessage(); });
+  seedIn.addEventListener('change', () => {
+    const v = Math.round(Number(seedIn.value));
+    if (!Number.isFinite(v) || v < 1 || v > 999999 || seedIn.value.trim() === '') {
+      seedIn.value = state.seed;
+      seedStatus.textContent = `種子請輸入 1–999999 的整數；已恢復為 #${state.seed}。`;
+      return;
+    }
+    seedIn.value = v;
+    if (v === state.seed) return;
+    state.seed = v;
+    run();
+    seedStatus.textContent = seedMessage('typed');
+  });
+
+  // ---------- 執行 ----------
+  let pending = 0;
+  function schedule() {
+    if (pending) return;
+    pending = requestAnimationFrame(() => { pending = 0; run(); });
+  }
+  function run() {
+    state.result = E.simulate({ patient: { ...state.patient }, prior: { ...state.prior }, days: state.days, seed: state.seed });
+    renderSummary();
+    renderLog();
+    drawAll();
+  }
+
+  // ---------- 摘要 ----------
+  const ICONS = {
+    ok: 'M4 12.5l5 5L20 6.5',
+    bad: 'M12 4v9M12 18.5v.5',
+    pending: 'M5 12h14',
+  };
+  function setState(el, kind, text) {
+    el.className = `state ${kind}`;
+    el.textContent = '';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '3'); svg.setAttribute('stroke-linecap', 'round'); svg.setAttribute('stroke-linejoin', 'round');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', ICONS[kind]); svg.append(path);
+    const span = document.createElement('span'); span.textContent = text;
+    el.append(svg, span);
+  }
+  function setValue(el, main, unit) {
+    el.textContent = main;
+    if (unit) { const s = document.createElement('small'); s.textContent = unit; el.append(s); }
+  }
+  function renderSummary() {
+    const r = state.result, N = r.days;
+    for (const k of ['fixed', 'bayes']) {
+      const s = r[k].summary, p = k[0];
+      if (s.targetDay) {
+        setValue($(`#${p}-target`), `第 ${s.targetDay}`, '天');
+        setState($(`#${p}-target-state`), 'ok', '3 天平均首次進入目標');
+      } else {
+        setValue($(`#${p}-target`), '未達標');
+        setState($(`#${p}-target-state`), 'pending', `${N} 天內未進入目標`);
+      }
+      setValue($(`#${p}-lows`), String(s.lows), '次');
+      if (s.lows === 0) setState($(`#${p}-lows-state`), 'ok', '沒有任何一天 <70');
+      else setState($(`#${p}-lows-state`), 'bad', s.lows2 ? `其中 ${s.lows2} 次 <54（第 2 級）` : '都在 54\u2060–\u206069（第 1 級）');
+      const sub = $(`#${p}-sub`); sub.textContent = '';
+      const parts = [['最終劑量 ', `${s.finalDose} U`], ['範圍內 ', `${s.inRange}/${N} 天`], ['最後 3 天平均 ', `${Math.round(s.lastAvg)} mg/dL`]];
+      parts.forEach(([label, val], i) => {
+        if (i) sub.append(' · ');
+        const b = document.createElement('b'); b.textContent = val; sub.append(label, b);
+      });
+    }
+    renderTakeaway();
+  }
+  function renderTakeaway() {
+    const r = state.result, N = r.days;
+    const F = r.fixed.summary.targetDay, B = r.bayes.summary.targetDay;
+    const segs = [];
+    if (F && B) {
+      if (B < F) segs.push('貝氏方法在', [`第 ${B} 天`], '達標，比固定規則（第 ' + F + ' 天）', [`早 ${F - B} 天`], '。');
+      else if (F < B) segs.push('固定規則在', [`第 ${F} 天`], '達標，比貝氏方法（第 ' + B + ' 天）', [`早 ${B - F} 天`], '。');
+      else segs.push('兩種方法都在', [`第 ${F} 天`], '達標。');
+    } else if (B) segs.push('貝氏方法在', [`第 ${B} 天`], '達標；固定規則在 ' + N + ' 天內', ['未達標'], '。');
+    else if (F) segs.push('固定規則在', [`第 ${F} 天`], '達標；貝氏方法在 ' + N + ' 天內', ['未達標'], '。');
+    else segs.push('兩種方法在 ' + N + ' 天內都', ['未達標'], '。');
+    const lf = r.fixed.summary.lows, lb = r.bayes.summary.lows;
+    segs.push('低血糖：固定規則 ', [`${lf} 次`], '、貝氏方法 ', [`${lb} 次`], '。');
+    if (state.patient.g0 < E.HYPO) segs.push('（起始空腹血糖已低於 70：應先處理低血糖，而不是加量。）');
+    const el = $('#takeaway'); el.textContent = '這次模擬：';
+    for (const s of segs) {
+      if (Array.isArray(s)) { const b = document.createElement('strong'); b.textContent = s[0]; el.append(b); }
+      else el.append(s);
+    }
+  }
+
+  // ---------- 決策紀錄 ----------
+  function cell(tr, content, cls) {
+    const td = document.createElement('td'); if (cls) td.className = cls;
+    if (typeof content === 'string') td.textContent = content; else td.append(...content);
+    tr.append(td); return td;
+  }
+  function readings(block) {
+    const out = [];
+    block.forEach((v, i) => {
+      if (i) out.push(' · ');
+      if (v < E.HYPO) { const s = document.createElement('span'); s.className = 'lowv'; s.textContent = `▼${v <= E.OBS_MIN ? '≤' + E.OBS_MIN : v}`; out.push(s); }
+      else out.push(String(v));
+    });
+    return out;
+  }
+  function note(text) { const s = document.createElement('span'); s.className = 'note'; s.textContent = text; return s; }
+  function doseChange(from, to) { return from === to ? `維持 ${to} U` : `${from} → ${to} U`; }
+  const FIXED_TEXT = { up: '平均 >130：加 2U', low: '有一天 <70：減 10%', hold: '平均 80–130：維持', gap: '平均 70–79：維持（原規則未定義）' };
+  function renderLog() {
+    const r = state.result;
+    const tf = $('#t-fixed tbody'), tb = $('#t-bayes tbody');
+    tf.textContent = ''; tb.textContent = '';
+    for (const l of r.fixed.log) {
+      const tr = document.createElement('tr');
+      cell(tr, `第 ${l.day - 2}–${l.day} 天`, 'num');
+      cell(tr, [...readings(l.block), note(`平均 ${f1(l.avg)}`)], 'num');
+      const parts = [FIXED_TEXT[l.code], document.createElement('br'), doseChange(l.from, l.to)];
+      if (l.final) parts.push(note('（模擬結束後的下一步）'));
+      cell(tr, parts);
+      tf.append(tr);
+    }
+    for (const l of r.bayes.log) {
+      const tr = document.createElement('tr');
+      cell(tr, `第 ${l.day - 2}–${l.day} 天`, 'num');
+      cell(tr, [...readings(l.block), note(`平均 ${f1(l.avg)}`)], 'num');
+      cell(tr, [f1(l.estMean), note(`${f1(l.estMean - 1.96 * l.estSd)}–${f1(l.estMean + 1.96 * l.estSd)}`)]);
+      const parts = [doseChange(l.from, l.to), note(`達標 ${pct(l.pIn)}／<70 ${pct(l.pLow)}`)];
+      if (l.guard) parts.push(note('前 3 天有 <70：不加量'));
+      if (l.reason === 'none-safe') parts.push(note('沒有劑量能讓 <70 機率低於 5%，選風險最低者'));
+      if (l.final) parts.push(note('（模擬結束後的下一步）'));
+      cell(tr, parts);
+      tb.append(tr);
+    }
+  }
+
+  // ---------- 圖表（SVG，自繪，不需網路） ----------
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  function s(tag, attrs, parent) {
+    const n = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.append(n);
+    return n;
+  }
+  function txt(parent, x, y, str, cls, anchor = 'start', size) {
+    const t = s('text', { x, y, class: cls, 'text-anchor': anchor }, parent);
+    if (size) t.setAttribute('font-size', size);
+    t.textContent = str;
+    return t;
+  }
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  // 文字若超出畫布左右邊界就往內移（字型載入後會重畫一次）
+  function keepInside(t, minX, maxX) {
+    let w = 0;
+    try { w = t.getComputedTextLength(); } catch (e) { return t; }
+    if (!w) return t;
+    const x = Number(t.getAttribute('x'));
+    const anchor = t.getAttribute('text-anchor');
+    const left = anchor === 'middle' ? x - w / 2 : anchor === 'end' ? x - w : x;
+    let shift = 0;
+    if (left + w > maxX) shift = maxX - (left + w);
+    if (left + shift < minX) shift = minX - left;
+    if (shift) t.setAttribute('x', x + shift);
+    return t;
+  }
+  function niceScale(lo, hi, count) {
+    if (!(hi - lo > 1e-9)) { lo -= 0.5; hi += 0.5; }
+    const raw = (hi - lo) / Math.max(1, count);
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / p;
+    const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+    const min = Math.floor(lo / step + 1e-9) * step, max = Math.ceil(hi / step - 1e-9) * step;
+    const ticks = [];
+    for (let v = min; v <= max + step * 1e-6; v += step) ticks.push(Math.round(v / step) * step);
+    return { min, max, ticks, step };
+  }
+  function blockTicks(N, withZero) {
+    const t = withZero ? [0] : [1];
+    for (let d = 3; d <= N; d += 3) t.push(d);
+    if (t[t.length - 1] !== N) t.push(N);
+    return t;
+  }
+
+  const charts = [
+    { id: 'c-glu-fixed', kind: 'glucose', method: 'fixed' },
+    { id: 'c-glu-bayes', kind: 'glucose', method: 'bayes' },
+    { id: 'c-dose-fixed', kind: 'dose', method: 'fixed' },
+    { id: 'c-dose-bayes', kind: 'dose', method: 'bayes' },
+    { id: 'c-post', kind: 'post', method: 'bayes' },
+  ];
+  for (const c of charts) { c.plot = $(`#${c.id} .plot`); c.width = 0; }
+
+  function sharedScales(r) {
+    const allObs = r.fixed.obs.concat(r.bayes.obs);
+    const gMax = Math.max(250, Math.ceil((Math.max(...allObs) + 15) / 50) * 50);
+    const gStep = gMax > 400 ? 100 : 50;
+    const gTicks = []; for (let v = gStep; v <= gMax; v += gStep) gTicks.push(v);
+    const dMaxRaw = Math.max(...r.fixed.dose, ...r.bayes.dose);
+    const dose = niceScale(0, Math.max(20, dMaxRaw * 1.2), 4);
+    return { glucose: { min: E.OBS_MIN, max: gMax, ticks: gTicks }, dose };
+  }
+
+  function frame(c, kind) {
+    const W = Math.max(240, Math.floor(c.plot.clientWidth));
+    const small = W < 460;
+    const fs = small ? 12 : 14;
+    const H = kind === 'glucose' ? clamp(Math.round(W * 0.6), 230, 340)
+      : kind === 'dose' ? clamp(Math.round(W * 0.46), 200, 280)
+      : clamp(Math.round(W * 0.36), 250, 360);
+    const m = { l: small ? 38 : 48, r: small ? 10 : 16, t: fs + 16, b: fs + 20 };
+    return { W, H, fs, small, m };
+  }
+
+  function draw(c) {
+    const r = state.result; if (!r) return;
+    const N = r.days;
+    const sc = sharedScales(r);
+    const { W, H, fs, small, m } = frame(c, c.kind);
+    c.width = Math.floor(c.plot.clientWidth);
+    const plot = c.plot;
+    plot.textContent = '';
+    const svg = s('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, 'font-size': fs, 'aria-hidden': 'true', focusable: 'false' }, plot);
+    const tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; plot.append(tip);
+
+    let xMin, xMax, yMin, yMax, yTicks, unit, dayMin, dayMax;
+    if (c.kind === 'post') { xMin = -0.5; xMax = N + 0.5; dayMin = 0; dayMax = N; }
+    else { xMin = 0.5; xMax = N + 0.5; dayMin = 1; dayMax = N; }
+    const arm = r[c.method];
+    if (c.kind === 'glucose') { yMin = sc.glucose.min; yMax = sc.glucose.max; yTicks = sc.glucose.ticks; unit = 'mg/dL'; }
+    else if (c.kind === 'dose') { yMin = 0; yMax = sc.dose.max; yTicks = sc.dose.ticks; unit = 'U'; }
+    else {
+      const P = arm.post, S = state.patient.S;
+      let lo = Math.min(S, ...P.map((p) => p.mean - 1.96 * p.sd)), hi = Math.max(S, ...P.map((p) => p.mean + 1.96 * p.sd));
+      const pad = (hi - lo) * 0.06 || 0.5;
+      const ns = niceScale(lo - pad, hi + pad, small ? 4 : 5);
+      yMin = ns.min; yMax = ns.max; yTicks = ns.ticks; unit = 'mg/dL 每 U';
+    }
+    const X = (d) => m.l + ((d - xMin) / (xMax - xMin)) * (W - m.l - m.r);
+    const Y = (v) => m.t + (1 - (v - yMin) / (yMax - yMin)) * (H - m.t - m.b);
+    const plotL = m.l, plotR = W - m.r, plotT = m.t, plotB = H - m.b;
+
+    // 格線與刻度
+    const g = s('g', {}, svg);
+    const yDec = yTicks.some((v) => Math.abs(v - Math.round(v)) > 1e-9);
+    for (const v of yTicks) {
+      if (v < yMin - 1e-9 || v > yMax + 1e-9) continue;
+      s('line', { x1: plotL, x2: plotR, y1: Y(v), y2: Y(v), class: 'grid' }, g);
+      txt(g, plotL - 7, Y(v) + fs * 0.35, yDec ? f1(v) : fInt(v), 'tick', 'end');
+    }
+    txt(g, plotL - 7, plotT - fs * 0.9, unit, 'unit', 'start', fs - 1).setAttribute('x', 2);
+    for (let d = 3; d < N; d += 3) s('line', { x1: X(d + 0.5), x2: X(d + 0.5), y1: plotT, y2: plotB, class: 'sep' }, g);
+    if (c.kind === 'post' && yMin < 0 && yMax > 0) s('line', { x1: plotL, x2: plotR, y1: Y(0), y2: Y(0), class: 'zero' }, g);
+    s('line', { x1: plotL, x2: plotR, y1: plotB, y2: plotB, class: 'axis' }, g);
+    const xt = blockTicks(N, c.kind === 'post');
+    xt.forEach((d, i) => {
+      const last = i === xt.length - 1;
+      const label = c.kind === 'post' && d === 0 ? '先驗' : last ? `${d} 天` : String(d);
+      keepInside(txt(g, X(d), plotB + fs + 6, label, 'tick', 'middle'), 1, W - 1);
+    });
+
+    const layer = s('g', {}, svg);
+    let hoverInfo;
+    if (c.kind === 'glucose') hoverInfo = drawGlucose(layer, arm, c.method, N, X, Y, { plotL, plotR, plotT, plotB, fs, small });
+    else if (c.kind === 'dose') hoverInfo = drawDose(layer, arm, c.method, N, X, Y, { plotL, plotR, plotT, plotB, fs, small });
+    else hoverInfo = drawPosterior(layer, arm, N, X, Y, { plotL, plotR, plotT, plotB, fs, small });
+
+    // 十字線與提示
+    const hover = s('g', { visibility: 'hidden' }, svg);
+    const cross = s('line', { y1: plotT, y2: plotB, class: 'cross' }, hover);
+    const hdot = s('circle', { r: 6, class: `hover-dot ${c.method}` }, hover);
+    c.showHover = (day) => {
+      if (day == null || day < dayMin || day > dayMax) { hover.setAttribute('visibility', 'hidden'); tip.hidden = true; return; }
+      const info = hoverInfo(day);
+      const x = X(day);
+      cross.setAttribute('x1', x); cross.setAttribute('x2', x);
+      hdot.setAttribute('cx', x); hdot.setAttribute('cy', Y(info.y));
+      hover.setAttribute('visibility', 'visible');
+      tip.textContent = '';
+      const strong = document.createElement('strong'); strong.textContent = info.value;
+      const u = document.createElement('span'); u.className = 'tip-unit'; u.textContent = info.unit;
+      tip.append(strong, u);
+      if (info.flag) { const f = document.createElement('span'); f.className = 'tip-low'; f.textContent = info.flag; tip.append(f); }
+      const sub = document.createElement('span'); sub.className = 'tip-sub'; sub.textContent = info.sub; tip.append(sub);
+      tip.hidden = false;
+      const tw = tip.offsetWidth;
+      let left = x + 12;
+      if (left + tw > W - 2) left = x - 12 - tw;
+      tip.style.left = `${Math.max(0, left)}px`;
+      tip.style.top = `${plotT + 2}px`;
+    };
+    c.dayFromX = (px) => clamp(Math.round(xMin + ((px - m.l) / (W - m.l - m.r)) * (xMax - xMin)), dayMin, dayMax);
+    c.dayRange = [dayMin, dayMax];
+    plot.setAttribute('role', 'img');
+    plot.setAttribute('aria-label', ariaLabel(c, r));
+    c.showHover(Hover.day);
+  }
+
+  function drawGlucose(g, arm, method, N, X, Y, o) {
+    const { plotL, plotR, fs, small } = o;
+    s('rect', { x: plotL, y: Y(E.TARGET_HI), width: plotR - plotL, height: Y(E.TARGET_LO) - Y(E.TARGET_HI), class: 'band-target' }, g);
+    txt(g, plotL + 6, Y(E.TARGET_HI) + fs + 3, '目標 80–130', 'band-label halo', 'start', fs - 1);
+    s('line', { x1: plotL, x2: plotR, y1: Y(E.HYPO), y2: Y(E.HYPO), class: 'hypo-line' }, g);
+    txt(g, plotL + 6, Y(E.HYPO) + fs + 2, '70 低血糖', 'hypo-label halo', 'start', fs - 1);
+    // 3 天平均（固定規則看的數字）
+    for (let t = 3; t <= N; t += 3) {
+      const a = E.mean(arm.obs.slice(t - 3, t));
+      s('line', { x1: X(t - 2 - 0.3), x2: X(t + 0.3), y1: Y(a), y2: Y(a), class: `avg ${method}` }, g);
+    }
+    s('polyline', { points: arm.obs.map((v, i) => `${X(i + 1)},${Y(v)}`).join(' '), class: `trace ${method}` }, g);
+    const r = small ? 4 : 5, tri = small ? 6.5 : 8;
+    arm.obs.forEach((v, i) => {
+      const cx = X(i + 1), cy = Y(v);
+      if (v < E.HYPO) {
+        s('path', { d: `M${cx - tri},${cy - tri * 0.75} L${cx + tri},${cy - tri * 0.75} L${cx},${cy + tri * 0.95} Z`, class: 'tri' }, g);
+        const label = v <= E.OBS_MIN ? `≤${E.OBS_MIN}` : String(v);
+        const right = cx + tri + 3 + label.length * fs * 0.6 < plotR;
+        txt(g, right ? cx + tri + 3 : cx - tri - 3, cy + fs * 0.35, label, 'hypo-val halo', right ? 'start' : 'end', fs - 1);
+      } else {
+        s('circle', { cx, cy, r, class: `dot ${method}` }, g);
+      }
+    });
+    return (day) => {
+      const v = arm.obs[day - 1];
+      return {
+        y: v, value: v <= E.OBS_MIN ? `≤${E.OBS_MIN}` : String(v), unit: 'mg/dL',
+        flag: v < E.HYPO ? '低血糖' : '', sub: `第 ${day} 天 · 劑量 ${arm.dose[day - 1]} U`,
+      };
+    };
+  }
+
+  function drawDose(g, arm, method, N, X, Y, o) {
+    const { plotT, fs } = o;
+    let d = `M${X(0.5)},${Y(arm.dose[0])}`;
+    for (let t = 1; t <= N; t++) {
+      d += ` H${X(t + 0.5)}`;
+      if (t < N && arm.dose[t] !== arm.dose[t - 1]) d += ` V${Y(arm.dose[t])}`;
+    }
+    s('path', { d: `${d} V${Y(0)} H${X(0.5)} Z`, class: `area ${method}` }, g);
+    s('path', { d, class: `step ${method}` }, g);
+    for (let t = 1; t <= N; t++) {
+      if (t > 1 && arm.dose[t - 1] === arm.dose[t - 2]) continue;
+      const v = arm.dose[t - 1];
+      let y = Y(v) - 8;
+      if (y - fs < plotT - fs * 0.4) y = Y(v) + fs + 4;
+      txt(g, X(t - 0.5) + 3, y, String(v), 'dose-label halo', 'start', fs);
+    }
+    return (day) => ({ y: arm.dose[day - 1], value: String(arm.dose[day - 1]), unit: 'U', sub: `第 ${day} 天` });
+  }
+
+  function drawPosterior(g, arm, N, X, Y, o) {
+    const { plotR, fs, small } = o;
+    const P = arm.post.slice(0, N + 1);
+    const S = state.patient.S;
+    const up = P.map((p) => `${X(p.day)},${Y(p.mean + 1.96 * p.sd)}`);
+    const lo = P.slice().reverse().map((p) => `${X(p.day)},${Y(p.mean - 1.96 * p.sd)}`);
+    s('path', { d: `M${up.join(' L')} L${lo.join(' L')} Z`, class: 'post-band' }, g);
+    s('line', { x1: X(-0.5), x2: plotR, y1: Y(S), y2: Y(S), class: 'truth' }, g);
+    s('polyline', { points: P.map((p) => `${X(p.day)},${Y(p.mean)}`).join(' '), class: 'post-line' }, g);
+    P.forEach((p) => s('circle', { cx: X(p.day), cy: Y(p.mean), r: small ? 3 : 3.5, class: 'dot bayes' }, g));
+    const above = Y(S) - fs - 8 >= o.plotT;
+    txt(g, X(0) + 10, above ? Y(S) - 8 : Y(S) + fs + 6, `真實值 ${fmtS(S)}`, 'truth-label halo', 'start', fs);
+    return (day) => {
+      const p = P[day];
+      return {
+        y: p.mean, value: f1(p.mean), unit: 'mg/dL 每 U',
+        sub: `${day === 0 ? '先驗' : `第 ${day} 天`} · 95% 範圍 ${f1(p.mean - 1.96 * p.sd)}–${f1(p.mean + 1.96 * p.sd)}`,
+      };
+    };
+  }
+
+  function ariaLabel(c, r) {
+    const arm = r[c.method], s = arm.summary, N = r.days;
+    if (c.kind === 'glucose') return `${NAMES[c.method]}的每日空腹血糖：${N} 天中有 ${s.inRange} 天在 80–130，低血糖 ${s.lows} 次，最後 3 天平均 ${Math.round(s.lastAvg)} mg/dL。`;
+    if (c.kind === 'dose') return `${NAMES[c.method]}的每日劑量：從 ${arm.dose[0]} U 調到 ${s.finalDose} U。`;
+    const p = arm.post[N];
+    return `貝氏方法估計的敏感度：先驗 ${f1(arm.post[0].mean)}，第 ${N} 天估計 ${f1(p.mean)}（95% 範圍 ${f1(p.mean - 1.96 * p.sd)}–${f1(p.mean + 1.96 * p.sd)}），真實值 ${fmtS(state.patient.S)}。`;
+  }
+
+  function renderPostCaption() {
+    const r = state.result, N = r.days, p = r.bayes.post[N], S = state.patient.S;
+    const lo = p.mean - 1.96 * p.sd, hi = p.mean + 1.96 * p.sd;
+    const el = $('#post-caption'); el.textContent = '';
+    el.append(`第 ${N} 天的估計：每 1U 降 `);
+    const b = document.createElement('b'); b.textContent = f1(p.mean); el.append(b);
+    el.append(` mg/dL（95% 範圍 ${f1(lo)}–${f1(hi)}），真實值 ${fmtS(S)}。`);
+    const cov = document.createElement('span');
+    const inside = S >= lo && S <= hi;
+    cov.className = `cover ${inside ? 'ok' : 'bad'}`;
+    cov.textContent = inside ? '真實值落在 95% 範圍內。' : '真實值不在 95% 範圍內：先驗或模型假設和這位病人不符。';
+    el.append(' ', cov);
+  }
+
+  function drawAll() {
+    for (const c of charts) draw(c);
+    renderPostCaption();
+  }
+
+  // ---------- 同步十字線（滑鼠、觸控、鍵盤） ----------
+  const Hover = {
+    day: null,
+    set(d) { this.day = d; for (const c of charts) if (c.showHover) c.showHover(d); },
+  };
+  for (const c of charts) {
+    const plot = c.plot;
+    const at = (e) => { const rect = plot.getBoundingClientRect(); return c.dayFromX(e.clientX - rect.left); };
+    plot.addEventListener('pointermove', (e) => { if (c.dayFromX) Hover.set(at(e)); });
+    plot.addEventListener('pointerdown', (e) => { if (c.dayFromX) Hover.set(at(e)); });
+    plot.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') Hover.set(null); });
+    plot.addEventListener('focus', () => { if (Hover.day == null) Hover.set(c.dayRange ? c.dayRange[0] : 1); });
+    plot.addEventListener('blur', () => Hover.set(null));
+    plot.addEventListener('keydown', (e) => {
+      if (!c.dayRange) return;
+      const [a, b] = c.dayRange;
+      const cur = Hover.day == null ? a : Hover.day;
+      if (e.key === 'ArrowRight') { Hover.set(clamp(cur + 1, a, b)); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { Hover.set(clamp(cur - 1, a, b)); e.preventDefault(); }
+      else if (e.key === 'Home') { Hover.set(a); e.preventDefault(); }
+      else if (e.key === 'End') { Hover.set(b); e.preventDefault(); }
+      else if (e.key === 'Escape') Hover.set(null);
+    });
+  }
+  document.addEventListener('pointerdown', (e) => { if (!e.target.closest || !e.target.closest('.plot')) Hover.set(null); });
+
+  // ---------- 尺寸改變時重畫 ----------
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver((entries) => {
+      for (const en of entries) {
+        const c = charts.find((x) => x.plot === en.target);
+        if (c && Math.floor(en.target.clientWidth) !== c.width) draw(c);
+      }
+    });
+    for (const c of charts) ro.observe(c.plot);
+  } else {
+    let t = 0;
+    window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(drawAll, 120); });
+  }
+
+  // ---------- 初始化 ----------
+  writeFields();
+  syncPresetUI();
+  syncPriorUI();
+  daysIn.value = state.days; syncDaysUI();
+  seedIn.value = state.seed; fixIn.checked = state.fixSeed;
+  seedStatus.textContent = seedMessage();
+  run();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => drawAll());
+})();
+</script>
+</body>
+</html>
