@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>基礎胰島素滴定示範計算器</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Glargine U300 基礎胰島素滴定教學示範：輸入劑量與 3 天空腹血糖，看建議劑量、理由、下次調整日與 14 天模擬。教學示範用，非臨床決策工具。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: clinical worksheet. Inputs left, pen dose-window result right, a 3-rule strip, then a two-panel 14-day trace (dose above, fasting glucose below, shared day axis). */
+:root {
+  --bg: #edf1f3;
+  --surface: #ffffff;
+  --surface-2: #f3f6f8;
+  --ink: #0a1620;
+  --ink-2: #32414d;
+  --muted: #586773;
+  --line: #cdd6dc;
+  --grid: #e3e8ec;
+  --accent: #1c5cab;
+  --accent-wash: #e2edfb;
+  --on-ink: #ffffff;
+  --dose: #2a78d6;
+  --fpg: #6250d6;
+  --good: #0ca30c;
+  --good-text: #006300;
+  --good-wash: rgba(12, 163, 12, 0.12);
+  --good-band: rgba(12, 163, 12, 0.30);
+  --crit: #d03b3b;
+  --crit-text: #b02a2a;
+  --crit-wash: rgba(208, 59, 59, 0.10);
+  --crit-band: rgba(208, 59, 59, 0.28);
+  --obs-wash: rgba(10, 22, 32, 0.05);
+  --window-bg: #0a1620;
+  --window-fg: #f3f7f9;
+  --window-edge: #3a4a57;
+  --banner-bg: #0a1620;
+  --banner-fg: #ffffff;
+  --banner-mark: #fab219;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", "Noto Sans TC", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a1014;
+    --surface: #121a20;
+    --surface-2: #19232b;
+    --ink: #eef3f6;
+    --ink-2: #c4ced5;
+    --muted: #97a4ae;
+    --line: #2d3a44;
+    --grid: #202b33;
+    --accent: #6da7ec;
+    --accent-wash: rgba(57, 135, 229, 0.18);
+    --on-ink: #0a1014;
+    --dose: #3987e5;
+    --fpg: #9085e9;
+    --good: #0ca30c;
+    --good-text: #4ccb4c;
+    --good-wash: rgba(12, 163, 12, 0.18);
+    --good-band: rgba(12, 163, 12, 0.40);
+    --crit: #d03b3b;
+    --crit-text: #f28b8b;
+    --crit-wash: rgba(208, 59, 59, 0.18);
+    --crit-band: rgba(208, 59, 59, 0.42);
+    --obs-wash: rgba(255, 255, 255, 0.04);
+    --window-bg: #04080b;
+    --window-fg: #f3f7f9;
+    --window-edge: #34434f;
+    --banner-bg: #1b262e;
+    --banner-fg: #ffffff;
+    --banner-mark: #fab219;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a1014;
+  --surface: #121a20;
+  --surface-2: #19232b;
+  --ink: #eef3f6;
+  --ink-2: #c4ced5;
+  --muted: #97a4ae;
+  --line: #2d3a44;
+  --grid: #202b33;
+  --accent: #6da7ec;
+  --accent-wash: rgba(57, 135, 229, 0.18);
+  --on-ink: #0a1014;
+  --dose: #3987e5;
+  --fpg: #9085e9;
+  --good: #0ca30c;
+  --good-text: #4ccb4c;
+  --good-wash: rgba(12, 163, 12, 0.18);
+  --good-band: rgba(12, 163, 12, 0.40);
+  --crit: #d03b3b;
+  --crit-text: #f28b8b;
+  --crit-wash: rgba(208, 59, 59, 0.18);
+  --crit-band: rgba(208, 59, 59, 0.42);
+  --obs-wash: rgba(255, 255, 255, 0.04);
+  --window-bg: #04080b;
+  --window-fg: #f3f7f9;
+  --window-edge: #34434f;
+  --banner-bg: #1b262e;
+  --banner-fg: #ffffff;
+  --banner-mark: #fab219;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { font-size: 112.5%; -webkit-text-size-adjust: 100%; }
+html.big { font-size: 131.25%; }
+@media (min-width: 1400px) {
+  html { font-size: 125%; }
+  html.big { font-size: 150%; }
+}
+:root {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+[hidden] { display: none !important; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+h1, h2 { text-wrap: balance; }
+.num-font { font-family: var(--font-num); }
+
+.page {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 1.25rem 7rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* ---------- masthead ---------- */
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+}
+.masthead-text { min-width: 0; }
+.tag-demo {
+  display: inline-block;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 0.05rem 0.55rem;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+h1 {
+  margin: 0.5rem 0 0.15rem;
+  font-size: clamp(1.6rem, 4.2vw, 2.4rem);
+  font-weight: 900;
+  line-height: 1.2;
+}
+.sub { margin: 0; color: var(--ink-2); font-size: 1.05rem; }
+.sub .num-font { font-weight: 600; }
+.privacy { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.85rem; }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.toolbar-label { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-right: 0.15rem; }
+.chip-btn {
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.chip-btn:hover { border-color: var(--ink-2); }
+.chip-btn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--on-ink); }
+.chip-btn .k { font-family: var(--font-num); font-weight: 600; margin-right: 0.3rem; }
+.toolbar-sep { width: 1px; height: 1.8rem; background: var(--line); margin: 0 0.25rem; }
+
+/* ---------- panels ---------- */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(1rem, 2.4vw, 1.6rem);
+  min-width: 0;
+}
+.panel h2 { margin: 0; font-size: 1.2rem; font-weight: 900; }
+.calc {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 900px) {
+  .calc { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+}
+
+/* ---------- inputs ---------- */
+.inputs { display: grid; gap: 1.5rem; }
+.field { border: 0; margin: 0; padding: 0; min-width: 0; }
+.field-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.6rem;
+  font-weight: 900;
+  font-size: 1.1rem;
+  padding: 0;
+  margin-bottom: 0.55rem;
+}
+.field-label .hint { font-weight: 500; font-size: 0.85rem; color: var(--muted); }
+.big-input {
+  width: 100%;
+  min-width: 0;
+  height: 3.5rem;
+  padding: 0 0.6rem;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-num);
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.big-input::-webkit-inner-spin-button,
+.big-input::-webkit-outer-spin-button,
+.pin::-webkit-inner-spin-button,
+.pin::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.big-input:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-wash); }
+.big-input.bad { border-color: var(--crit); }
+.big-input.low { border-color: var(--crit); background: var(--crit-wash); }
+
+.stepper {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem;
+  gap: 0.5rem;
+  align-items: center;
+}
+.stepper-input { position: relative; }
+.stepper-input .big-input { padding-right: 2.2rem; }
+.stepper-input .unit-in {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 700;
+  color: var(--muted);
+  pointer-events: none;
+}
+.step-btn {
+  height: 3.5rem;
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  background: var(--surface-2);
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.step-btn:hover { border-color: var(--ink-2); }
+
+.fpg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.fpg-cell { display: grid; gap: 0.3rem; min-width: 0; }
+.fpg-cell label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 0.4rem; font-size: 0.9rem; }
+.fpg-cell .day { font-weight: 700; }
+.fpg-cell .date { color: var(--muted); font-variant-numeric: tabular-nums; }
+.low-flag { color: var(--crit-text); font-weight: 900; font-size: 0.85rem; min-height: 1.3em; }
+
+.gauge { margin-top: 0.9rem; }
+.g-track {
+  position: relative;
+  height: 14px;
+  margin-top: 2rem;
+  border-radius: 7px;
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.g-hypo { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px 0 0 7px; background: var(--crit-band); }
+.g-target { position: absolute; top: 0; bottom: 0; background: var(--good-band); }
+.g-dot {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--ink-2);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+.g-dot.low { background: var(--crit); }
+.g-avg {
+  position: absolute;
+  top: -7px;
+  bottom: -7px;
+  width: 4px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+.g-avg-label {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-weight: 900;
+  font-size: 0.95rem;
+}
+.g-avg-label .num-font { font-weight: 600; }
+.g-cap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1rem;
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.g-cap span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.sw { display: inline-block; width: 0.9rem; height: 0.7rem; border-radius: 3px; flex: none; }
+.sw-target { background: var(--good-band); }
+.sw-hypo { background: var(--crit-band); }
+.sw-avg { width: 4px; height: 0.95rem; background: var(--ink); border-radius: 2px; }
+
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.seg input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.seg label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+  min-width: 5.5rem;
+  padding: 0 1.1rem;
+  border-radius: 8px;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.seg input:checked + label { background: var(--ink); color: var(--on-ink); }
+.seg input#hypoYes:checked + label { background: var(--crit); color: #ffffff; }
+.seg input:focus-visible + label { outline: 3px solid var(--accent); outline-offset: 2px; }
+.seg.sm { padding: 3px; border-radius: 10px; vertical-align: middle; }
+.seg.sm label { min-height: 2.2rem; min-width: 3.6rem; padding: 0 0.6rem; font-size: 1rem; font-family: var(--font-num); font-weight: 600; }
+.auto-note {
+  margin: 0.6rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: var(--crit-wash);
+  color: var(--crit-text);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.date-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem; }
+.date-row label { font-weight: 700; }
+.date-input {
+  height: 2.9rem;
+  padding: 0 0.7rem;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+.date-row .hint { font-size: 0.85rem; color: var(--muted); }
+
+/* ---------- result ---------- */
+.result { border: 2px solid var(--ink); display: grid; gap: 1.15rem; }
+.result-body { display: grid; gap: 1.15rem; }
+.res-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 1.15rem;
+}
+.pill svg { width: 1.05em; height: 1.05em; fill: currentColor; flex: none; }
+.is-up { background: var(--accent-wash); color: var(--accent); }
+.is-down { background: var(--crit-wash); color: var(--crit-text); }
+.is-hold { background: var(--good-wash); color: var(--good-text); }
+.is-none { background: var(--surface-2); color: var(--ink-2); }
+.res-dose { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+.dose-window {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 11rem;
+  padding: 0.35rem 1.4rem 0.45rem 2rem;
+  border-radius: 14px;
+  background: var(--window-bg);
+  color: var(--window-fg);
+  box-shadow: inset 0 0 0 3px var(--window-edge);
+}
+.dose-window::before {
+  content: "";
+  position: absolute;
+  left: 0.65rem;
+  top: 50%;
+  margin-top: -9px;
+  border: 9px solid transparent;
+  border-left: 11px solid var(--banner-mark);
+  border-right: 0;
+}
+.dose-window .num {
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: clamp(3.6rem, 11vw, 5.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.dose-window .unit { font-size: 1.6rem; font-weight: 700; }
+.res-delta { display: grid; gap: 0.4rem; justify-items: start; }
+.from-to { color: var(--ink-2); font-size: 1.05rem; }
+.from-to b { font-family: var(--font-num); font-weight: 600; color: var(--ink); }
+.delta-chip {
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 1.3rem;
+  padding: 0.05rem 0.7rem;
+  border-radius: 8px;
+}
+.reason { margin: 0; font-size: 1.35rem; font-weight: 700; line-height: 1.55; text-wrap: pretty; }
+.calc-lines { margin: 0; display: grid; gap: 0.3rem; font-size: 0.95rem; color: var(--ink-2); }
+.calc-lines div { display: flex; gap: 0.75rem; min-width: 0; }
+.calc-lines dt { flex: none; width: 2.6em; font-weight: 700; color: var(--muted); }
+.calc-lines dd { margin: 0; min-width: 0; font-family: var(--font-num); overflow-wrap: anywhere; }
+.next { border-top: 1px solid var(--line); padding-top: 1rem; display: grid; gap: 0.15rem; }
+.next-label { font-size: 0.85rem; font-weight: 900; color: var(--muted); letter-spacing: 0.08em; }
+.next-date { font-size: 1.55rem; font-weight: 900; line-height: 1.35; }
+.next-sub { margin: 0.1rem 0 0; color: var(--ink-2); }
+.res-error { margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--crit-text); }
+
+/* ---------- rules ---------- */
+.rules { display: grid; gap: 1rem; }
+.rules-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.4rem 1rem; }
+.rules-head p { margin: 0; color: var(--muted); font-size: 0.9rem; flex: 1 1 18rem; }
+.ghost-btn {
+  min-height: 2.5rem;
+  padding: 0 0.9rem;
+  border-radius: 8px;
+  border: 2px solid var(--line);
+  background: transparent;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.ghost-btn:hover { border-color: var(--ink-2); }
+.rule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr);
+  counter-reset: rule;
+}
+@media (min-width: 900px) {
+  .rule-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.rule {
+  counter-increment: rule;
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  padding: 0.9rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  min-width: 0;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.rule.active { border-color: var(--ink); background: var(--surface-2); }
+.rule-top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.rule-no { font-size: 0.8rem; font-weight: 700; color: var(--muted); letter-spacing: 0.06em; }
+.rule-no::before { content: "優先 " counter(rule); }
+.rule-tag { padding: 0.1rem 0.6rem; border-radius: 999px; font-weight: 900; font-size: 0.95rem; }
+.rule-now {
+  margin-left: auto;
+  padding: 0.05rem 0.55rem;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: 0.8rem;
+  font-weight: 900;
+  visibility: hidden;
+}
+.rule.active .rule-now { visibility: visible; }
+.rule p { margin: 0; font-size: 1.05rem; line-height: 2.2; }
+.rule .rule-aside { font-size: 0.85rem; line-height: 1.5; color: var(--muted); }
+.pin {
+  width: 4.4rem;
+  height: 2.3rem;
+  padding: 0 0.3rem;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-align: center;
+  vertical-align: baseline;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.pin.narrow { width: 3.4rem; }
+.pin.bad { border-color: var(--crit); background: var(--crit-wash); }
+.echo { font-family: var(--font-num); font-weight: 600; }
+.rules-foot { margin: 0; font-size: 1rem; line-height: 2.2; color: var(--ink-2); }
+.param-error { margin: 0; color: var(--crit-text); font-weight: 700; }
+
+/* ---------- simulation ---------- */
+.sim { display: grid; gap: 1rem; }
+.sim-head { display: grid; gap: 0.3rem; }
+.sim-summary { margin: 0; font-size: 1.15rem; font-weight: 700; text-wrap: pretty; }
+.sim-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 0.95rem;
+  line-height: 2.4;
+  color: var(--ink-2);
+}
+.sim-controls .ghost-btn { margin-left: auto; background: var(--surface); }
+.key { display: flex; flex-wrap: wrap; gap: 0.3rem 1.25rem; font-size: 0.9rem; color: var(--ink-2); }
+.key span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.k-line { display: inline-block; width: 1.4rem; height: 3px; border-radius: 2px; flex: none; }
+.k-dose { background: var(--dose); }
+.k-fpg { background: var(--fpg); }
+.k-hypo { background: var(--crit); height: 2px; }
+.k-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--crit); flex: none; }
+.k-obs { display: inline-block; width: 1.1rem; height: 0.9rem; border-radius: 3px; background: var(--obs-wash); box-shadow: inset 0 0 0 1px var(--line); flex: none; }
+.k-eval { display: inline-block; width: 1px; height: 1rem; background: var(--muted); flex: none; }
+
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.chart svg:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.chart text { font-family: var(--font-body); fill: var(--muted); }
+.chart .c-title { fill: var(--ink); font-weight: 900; }
+.chart .c-tick { font-variant-numeric: tabular-nums; }
+.chart .c-val { fill: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+.chart .c-low-val { fill: var(--crit-text); font-weight: 900; }
+.chart .c-dec { fill: var(--ink-2); font-weight: 900; }
+.chart .c-dec.down { fill: var(--crit-text); }
+.chart .c-axis-cap { fill: var(--muted); }
+.c-grid { stroke: var(--grid); stroke-width: 1; }
+.c-base { stroke: var(--line); stroke-width: 1; }
+.c-obs { fill: var(--obs-wash); }
+.c-band { fill: var(--good-wash); }
+.c-eval { stroke: var(--muted); stroke-width: 1; stroke-opacity: 0.45; }
+.c-hypo { stroke: var(--crit); stroke-width: 2; }
+.c-dose { fill: none; stroke: var(--dose); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.c-dose-area { fill: var(--dose); fill-opacity: 0.1; }
+.c-fpg { fill: none; stroke: var(--fpg); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.c-dot { fill: var(--fpg); stroke: var(--surface); stroke-width: 2; }
+.c-dot.obs { fill: var(--surface); stroke: var(--fpg); stroke-width: 2.5; }
+.c-dot.low { fill: var(--crit); stroke: var(--surface); stroke-width: 2; }
+.c-cross { stroke: var(--ink); stroke-width: 1; stroke-opacity: 0.55; }
+.c-hover-dose { fill: var(--surface); stroke: var(--dose); stroke-width: 3; }
+.c-hover-fpg { fill: var(--surface); stroke: var(--fpg); stroke-width: 3; }
+.c-hit { fill: transparent; cursor: crosshair; }
+
+.tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  min-width: 11rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+.tip-head { font-weight: 700; opacity: 0.85; }
+.tip-row { display: flex; align-items: center; gap: 0.45rem; }
+.tip-row b { font-family: var(--font-num); font-weight: 600; font-size: 1.05rem; }
+.tip-key { display: inline-block; width: 0.9rem; height: 3px; border-radius: 2px; flex: none; }
+.tip-dec { margin-top: 0.3rem; padding-top: 0.3rem; border-top: 1px solid rgba(127, 127, 127, 0.45); font-weight: 700; }
+
+.sim-note { margin: 0; font-size: 0.9rem; color: var(--muted); }
+.table-view summary {
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.table-wrap { overflow-x: auto; margin-top: 0.5rem; }
+.table-wrap table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+.table-wrap th, .table-wrap td {
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid var(--grid);
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.table-wrap th { font-weight: 700; color: var(--muted); font-size: 0.85rem; border-bottom-color: var(--line); }
+.table-wrap th:first-child, .table-wrap td:first-child,
+.table-wrap th:nth-child(2), .table-wrap td:nth-child(2),
+.table-wrap th:last-child, .table-wrap td:last-child { text-align: left; }
+.table-wrap tr.obs td { color: var(--muted); }
+.table-wrap td.low { color: var(--crit-text); font-weight: 900; }
+.table-wrap td.dec { font-weight: 700; }
+
+/* ---------- fixed disclaimer ---------- */
+.disclaimer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding-top: 0.75rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--banner-bg);
+  color: var(--banner-fg);
+  border-top: 4px solid var(--banner-mark);
+  font-size: 1.15rem;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.4;
+}
+.disclaimer svg { width: 1.5rem; height: 1.5rem; flex: none; }
+.disclaimer .tri { fill: var(--banner-mark); }
+.disclaimer .bang { fill: #0a1620; }
+
+@media (max-width: 420px) {
+  .seg label { min-width: 4.6rem; }
+  .fpg-cell label { font-size: 0.82rem; }
+  .big-input { font-size: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <div class="masthead-text">
+      <span class="tag-demo">教學示範・非臨床決策工具</span>
+      <h1>基礎胰島素滴定示範計算器</h1>
+      <p class="sub"><span class="num-font">Glargine U300</span>・依 3 天空腹血糖，每 <span data-echo="interval">3</span> 天調整一次</p>
+      <p class="privacy">所有計算都在這個頁面內完成，不儲存、不傳送任何資料。</p>
+    </div>
+    <div class="toolbar" role="group" aria-label="示範情境與字級">
+      <span class="toolbar-label">示範情境</span>
+      <button type="button" class="chip-btn" data-preset="high" aria-pressed="false"><span class="k">A</span>血糖偏高</button>
+      <button type="button" class="chip-btn" data-preset="ok" aria-pressed="false"><span class="k">B</span>已達標</button>
+      <button type="button" class="chip-btn" data-preset="hypo" aria-pressed="false"><span class="k">C</span>有低血糖</button>
+      <span class="toolbar-sep" aria-hidden="true"></span>
+      <button type="button" class="chip-btn" id="bigText" aria-pressed="false">放大字級</button>
+    </div>
+  </header>
+
+  <main class="calc">
+    <form class="panel inputs" id="inputs" novalidate autocomplete="off">
+      <div class="field">
+        <label class="field-label" for="dose">目前每日劑量 <span class="hint">單位 U，整數</span></label>
+        <div class="stepper">
+          <button type="button" class="step-btn" data-step="-1" aria-label="劑量減 1 U">−</button>
+          <div class="stepper-input">
+            <input class="big-input" id="dose" type="number" inputmode="numeric" min="1" max="300" step="1" value="20">
+            <span class="unit-in" aria-hidden="true">U</span>
+          </div>
+          <button type="button" class="step-btn" data-step="1" aria-label="劑量加 1 U">+</button>
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend class="field-label">最近 3 天空腹血糖 <span class="hint">mg/dL</span></legend>
+        <div class="fpg-grid">
+          <div class="fpg-cell">
+            <label for="fpg0"><span class="day">第 1 天</span><span class="date" id="date0"></span></label>
+            <input class="big-input" id="fpg0" type="number" inputmode="numeric" min="20" max="600" value="152">
+            <span class="low-flag" id="flag0"></span>
+          </div>
+          <div class="fpg-cell">
+            <label for="fpg1"><span class="day">第 2 天</span><span class="date" id="date1"></span></label>
+            <input class="big-input" id="fpg1" type="number" inputmode="numeric" min="20" max="600" value="148">
+            <span class="low-flag" id="flag1"></span>
+          </div>
+          <div class="fpg-cell">
+            <label for="fpg2"><span class="day">第 3 天</span><span class="date" id="date2"></span></label>
+            <input class="big-input" id="fpg2" type="number" inputmode="numeric" min="20" max="600" value="160">
+            <span class="low-flag" id="flag2"></span>
+          </div>
+        </div>
+        <div class="gauge" aria-hidden="true">
+          <div class="g-track">
+            <div class="g-hypo" id="gHypo"></div>
+            <div class="g-target" id="gTarget"></div>
+            <div class="g-dot" id="gDot0"></div>
+            <div class="g-dot" id="gDot1"></div>
+            <div class="g-dot" id="gDot2"></div>
+            <div class="g-avg" id="gAvg"></div>
+            <div class="g-avg-label" id="gAvgLabel"></div>
+          </div>
+          <p class="g-cap">
+            <span><i class="sw sw-target"></i>目標 <span id="capTarget">80–130</span></span>
+            <span><i class="sw sw-hypo"></i>低於 <span id="capHypo">70</span></span>
+            <span><i class="sw sw-avg"></i>3 天平均</span>
+            <span>刻度 40–300 mg/dL</span>
+          </p>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend class="field-label">這 3 天有低血糖嗎？ <span class="hint">任何時間 &lt;<span data-echo="hypo">70</span> mg/dL，或有低血糖症狀</span></legend>
+        <div class="seg" role="radiogroup" aria-label="這 3 天有低血糖嗎">
+          <input type="radio" name="hypo" id="hypoNo" value="no" checked><label for="hypoNo">沒有</label>
+          <input type="radio" name="hypo" id="hypoYes" value="yes"><label for="hypoYes">有</label>
+        </div>
+        <p class="auto-note" id="autoNote" hidden></p>
+      </fieldset>
+
+      <div class="field date-row">
+        <label for="evalDate">評估日</label>
+        <input class="date-input" id="evalDate" type="date">
+        <span class="hint">第 3 天＝評估日，預設今天</span>
+      </div>
+    </form>
+
+    <section class="panel result" id="result" aria-labelledby="resTitle">
+      <div class="res-head">
+        <h2 id="resTitle">建議新劑量</h2>
+        <span class="pill is-none" id="pill"></span>
+      </div>
+      <div id="resBody" class="result-body">
+        <div class="res-dose">
+          <div class="dose-window">
+            <span class="num" id="newDose">--</span><span class="unit">U</span>
+          </div>
+          <div class="res-delta">
+            <span class="from-to" id="fromTo"></span>
+            <span class="delta-chip is-none" id="deltaChip"></span>
+          </div>
+        </div>
+        <p class="reason" id="reason" aria-live="polite"></p>
+        <dl class="calc-lines">
+          <div><dt>平均</dt><dd id="calcAvg"></dd></div>
+          <div><dt>劑量</dt><dd id="calcDose"></dd></div>
+        </dl>
+        <div class="next">
+          <span class="next-label">下次調整日</span>
+          <span class="next-date" id="nextDate"></span>
+          <p class="next-sub" id="nextSub"></p>
+        </div>
+      </div>
+      <p class="res-error" id="resError" hidden></p>
+    </section>
+  </main>
+
+  <section class="panel rules" aria-labelledby="rulesTitle">
+    <div class="rules-head">
+      <h2 id="rulesTitle">滴定規則</h2>
+      <p>由上往下判斷，先符合的規則優先。藍框數字可直接修改，結果與模擬會立即更新。</p>
+      <button type="button" class="ghost-btn" id="resetParams">恢復預設值</button>
+    </div>
+    <ol class="rule-list">
+      <li class="rule" data-rule="down">
+        <div class="rule-top"><span class="rule-no"></span><span class="rule-tag is-down">減量</span><span class="rule-now">本次適用</span></div>
+        <p>任一天空腹 &lt; <input class="pin" id="pHypo" type="number" inputmode="numeric" value="70" aria-label="低血糖門檻 mg/dL"> mg/dL，或有低血糖症狀 → 劑量減
+          <span class="seg sm" role="radiogroup" aria-label="減量比例">
+            <input type="radio" name="cut" id="cut10" value="10" checked><label for="cut10">10%</label>
+            <input type="radio" name="cut" id="cut15" value="15"><label for="cut15">15%</label>
+            <input type="radio" name="cut" id="cut20" value="20"><label for="cut20">20%</label>
+          </span>
+        </p>
+        <span class="rule-aside">減量後取整數，小數無條件捨去（往安全方向）。</span>
+      </li>
+      <li class="rule" data-rule="up">
+        <div class="rule-top"><span class="rule-no"></span><span class="rule-tag is-up">加量</span><span class="rule-now">本次適用</span></div>
+        <p>3 天平均 &gt; 目標上限 <span class="echo" data-echo="hi">130</span> mg/dL → 每日加 <input class="pin narrow" id="pStep" type="number" inputmode="numeric" value="2" aria-label="加量幅度 U"> U</p>
+        <span class="rule-aside">一次只加一小步，下一個評估日再看效果。</span>
+      </li>
+      <li class="rule" data-rule="hold">
+        <div class="rule-top"><span class="rule-no"></span><span class="rule-tag is-hold">維持</span><span class="rule-now">本次適用</span></div>
+        <p>3 天平均在目標 <input class="pin" id="pLo" type="number" inputmode="numeric" value="80" aria-label="目標下限 mg/dL">–<input class="pin" id="pHi" type="number" inputmode="numeric" value="130" aria-label="目標上限 mg/dL"> mg/dL 內 → 維持劑量</p>
+        <span class="rule-aside">平均低於下限但沒有低血糖時，本示範也先維持並提醒觀察。</span>
+      </li>
+    </ol>
+    <p class="rules-foot">每 <input class="pin narrow" id="pInterval" type="number" inputmode="numeric" value="3" aria-label="評估間隔天數"> 天評估一次：glargine U300 約 3–4 天才達穩定濃度，調得太頻繁會看不到真正的效果。</p>
+    <p class="param-error" id="paramError" hidden></p>
+  </section>
+
+  <section class="panel sim" aria-labelledby="simTitle">
+    <div class="sim-head">
+      <h2 id="simTitle">14 天模擬</h2>
+      <p class="sim-summary" id="simSummary"></p>
+    </div>
+    <div class="sim-controls">
+      <span>模擬病人：每 1 U 使空腹下降 <input class="pin narrow" id="sSens" type="number" inputmode="numeric" value="4" aria-label="每 1 U 使空腹下降 mg/dL"> mg/dL</span>
+      <span>每日隨機變動 ± <input class="pin narrow" id="sNoise" type="number" inputmode="numeric" value="10" aria-label="每日隨機變動 mg/dL"> mg/dL</span>
+      <button type="button" class="ghost-btn" id="reroll">換一組隨機變動</button>
+    </div>
+    <div class="key" aria-hidden="true">
+      <span><i class="k-line k-dose"></i>每日劑量</span>
+      <span><i class="k-line k-fpg"></i>空腹血糖</span>
+      <span><i class="sw sw-target"></i>目標 <span data-echo="range">80–130</span></span>
+      <span><i class="k-line k-hypo"></i><i class="k-dot"></i>低於 <span data-echo="hypo">70</span>（低血糖）</span>
+      <span><i class="k-obs"></i>灰底＝輸入的 3 天實測</span>
+      <span><i class="k-eval"></i>直線＝評估日，隔天起換新劑量</span>
+    </div>
+    <div class="chart" id="chart">
+      <svg id="chartSvg" tabindex="0" role="img" aria-label="14 天模擬圖：上為每日劑量，下為空腹血糖。聚焦後可用左右方向鍵逐日查看。"></svg>
+      <div class="tip" id="tip" role="status" hidden></div>
+    </div>
+    <p class="sim-note">虛構病人模型：劑量效果逐日累積（約 3–4 天穩定），加上隨機變動。只用來示範「小步、定期調整」的節奏，真實病人反應因人而異。</p>
+    <details class="table-view">
+      <summary>查看每日數據</summary>
+      <div class="table-wrap"><table id="simTable"></table></div>
+    </details>
+  </section>
+</div>
+
+<footer class="disclaimer" role="note">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path class="tri" d="M12 2.2 23 21.3H1z"/><rect class="bang" x="10.9" y="8.4" width="2.2" height="7" rx="1"/><rect class="bang" x="10.9" y="16.7" width="2.2" height="2.2" rx="1"/></svg>
+  <span>教學示範用，實際劑量請依醫師指示</span>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  document.documentElement.lang = 'zh-Hant';
+
+  var DEF = { lo: 80, hi: 130, step: 2, interval: 3, hypo: 70, cut: 10 };
+  var PRESETS = {
+    high: { dose: 20, fpg: [152, 148, 160], symp: false },
+    ok:   { dose: 24, fpg: [118, 105, 112], symp: false },
+    hypo: { dose: 30, fpg: [88, 65, 92], symp: false }
+  };
+  var SIM_DAYS = 14;
+  var WEEK = '日一二三四五六';
+  var seed = 20261104;
+  var view = null;
+  var lastW = 0;
+
+  function $(id) { return document.getElementById(id); }
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function r1(x) { return String(Math.round(x * 10) / 10); }
+  function sum(a) { return a.reduce(function (s, v) { return s + v; }, 0); }
+  function isInt(v) { return Number.isFinite(v) && Math.floor(v) === v; }
+  function readNum(id) { var raw = $(id).value.trim(); return raw === '' ? NaN : Number(raw); }
+  function setText(id, s) { $(id).textContent = s; }
+  function echo(name, s) {
+    document.querySelectorAll('[data-echo="' + name + '"]').forEach(function (n) { n.textContent = s; });
+  }
+
+  /* ---------- dates ---------- */
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  function iso(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+  function parseISO(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+  }
+  function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+  function md(d) { return (d.getMonth() + 1) + '/' + d.getDate(); }
+  function mdw(d) { return md(d) + '（' + WEEK[d.getDay()] + '）'; }
+  function longDate(d) {
+    return d.getFullYear() + ' 年 ' + (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日（週' + WEEK[d.getDay()] + '）';
+  }
+
+  /* ---------- rule ---------- */
+  function decide(dose, fpgs, symp, p) {
+    var avg = sum(fpgs) / fpgs.length;
+    var low = [];
+    fpgs.forEach(function (v, i) { if (v < p.hypo) low.push(i); });
+    if (low.length || symp) {
+      var raw = dose * (100 - p.cut) / 100;
+      var next = Math.max(0, Math.floor(raw + 1e-9));
+      return { kind: 'down', avg: avg, low: low, symp: symp, raw: raw, next: next, delta: next - dose };
+    }
+    if (avg > p.hi) return { kind: 'up', avg: avg, low: low, next: dose + p.step, delta: p.step };
+    if (avg < p.lo) return { kind: 'holdlow', avg: avg, low: low, next: dose, delta: 0 };
+    return { kind: 'hold', avg: avg, low: low, next: dose, delta: 0 };
+  }
+
+  /* ---------- simulation (fictional patient) ---------- */
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function simulate(dose0, fpgs, symp, p, sim) {
+    var rnd = mulberry32(seed);
+    var alpha = 1 - Math.exp(-1 / 1.3); // U300: effect approaches steady state over ~3–4 days
+    var base = sum(fpgs) / 3 + sim.sens * dose0;
+    var days = fpgs.map(function (v, i) { return { day: i - 2, dose: dose0, fpg: v, obs: true }; });
+    var dec = decide(dose0, fpgs, symp, p);
+    days[2].dec = dec;
+    var cur = dec.next, eff = dose0, nextEval = p.interval;
+    for (var t = 1; t <= SIM_DAYS; t++) {
+      eff += (cur - eff) * alpha;
+      var noise = ((rnd() + rnd() + rnd()) / 1.5 - 1) * sim.noise;
+      var fpg = Math.max(40, Math.round(base - sim.sens * eff + noise));
+      var rec = { day: t, dose: cur, fpg: fpg };
+      days.push(rec);
+      if (fpg < p.hypo || t === nextEval) {
+        var win = days.slice(-3).map(function (d) { return d.fpg; });
+        dec = decide(cur, win, false, p);
+        rec.dec = dec;
+        cur = dec.next;
+        nextEval = t + p.interval;
+      }
+    }
+    return days;
+  }
+
+  /* ---------- reading inputs ---------- */
+  function readParams() {
+    var p = {
+      lo: readNum('pLo'), hi: readNum('pHi'), step: readNum('pStep'),
+      interval: readNum('pInterval'), hypo: readNum('pHypo'),
+      cut: Number(document.querySelector('input[name="cut"]:checked').value)
+    };
+    var errs = [];
+    function chk(id, ok, msg) { $(id).classList.toggle('bad', !ok); if (!ok) errs.push(msg); }
+    chk('pHypo', isInt(p.hypo) && p.hypo >= 40 && p.hypo <= 100, '低血糖門檻請填 40–100 的整數');
+    chk('pLo', isInt(p.lo) && p.lo >= 60 && p.lo <= 200, '目標下限請填 60–200 的整數');
+    chk('pHi', isInt(p.hi) && p.hi >= 80 && p.hi <= 300 && !(p.hi <= p.lo), '目標上限要大於下限（80–300）');
+    chk('pStep', isInt(p.step) && p.step >= 1 && p.step <= 10, '加量幅度請填 1–10 U');
+    chk('pInterval', isInt(p.interval) && p.interval >= 1 && p.interval <= 7, '評估間隔請填 1–7 天');
+    p.ok = errs.length === 0;
+    p.errs = errs;
+    return p;
+  }
+  function readSim() {
+    var s = { sens: readNum('sSens'), noise: readNum('sNoise') };
+    var okS = Number.isFinite(s.sens) && s.sens >= 1 && s.sens <= 10;
+    var okN = Number.isFinite(s.noise) && s.noise >= 0 && s.noise <= 30;
+    $('sSens').classList.toggle('bad', !okS);
+    $('sNoise').classList.toggle('bad', !okN);
+    s.ok = okS && okN;
+    return s;
+  }
+
+  /* ---------- copy ---------- */
+  var ICON = {
+    up: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5 14 9.5H10V14H6V9.5H2z"/></svg>',
+    down: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.5 2 6.5H6V2h4v4.5h4z"/></svg>',
+    hold: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4.5h11v2.5h-11zM2.5 9h11v2.5h-11z"/></svg>'
+  };
+  function kindClass(k) { return k === 'up' ? 'is-up' : k === 'down' ? 'is-down' : 'is-hold'; }
+  function signed(n) { return n > 0 ? '+' + n : n < 0 ? '−' + Math.abs(n) : '0'; }
+  function dayName(i) { return '第 ' + (i + 1) + ' 天'; }
+
+  function reasonText(r, dose, fpgs, p) {
+    var rng = p.lo + '–' + p.hi;
+    if (r.kind === 'down') {
+      if (r.low.length === 1) {
+        var i = r.low[0];
+        return dayName(i) + '空腹 ' + fpgs[i] + ' mg/dL，低於 ' + p.hypo + '，有低血糖風險，劑量先減 ' + p.cut + '%。';
+      }
+      if (r.low.length > 1) {
+        var lows = r.low.map(function (j) { return fpgs[j]; });
+        return r.low.map(function (j) { return j + 1; }).join('、') + ' 天空腹都低於 ' + p.hypo + '（最低 ' + Math.min.apply(null, lows) + ' mg/dL），劑量先減 ' + p.cut + '%。';
+      }
+      return '這 3 天曾有低血糖症狀，安全優先，劑量先減 ' + p.cut + '%。';
+    }
+    if (r.kind === 'up') return '3 天空腹平均 ' + r1(r.avg) + ' mg/dL，高於目標上限 ' + p.hi + '，每日劑量加 ' + p.step + ' U。';
+    if (r.kind === 'holdlow') return '3 天空腹平均 ' + r1(r.avg) + ' mg/dL，略低於目標下限 ' + p.lo + '，但沒有低血糖，先維持劑量、密切觀察。';
+    return '3 天空腹平均 ' + r1(r.avg) + ' mg/dL，在目標 ' + rng + ' 之內，維持目前劑量。';
+  }
+  function doseCalc(r, dose, p) {
+    if (r.kind === 'up') return dose + ' U + ' + p.step + ' U = ' + r.next + ' U';
+    if (r.kind === 'down') {
+      var pct = (100 - p.cut) + '%';
+      if (Math.abs(r.raw - r.next) < 1e-9) return dose + ' U × ' + pct + ' = ' + r.next + ' U';
+      return dose + ' U × ' + pct + ' = ' + r1(r.raw) + ' → 取整數 ' + r.next + ' U';
+    }
+    return '維持 ' + dose + ' U';
+  }
+  function decShort(dec, p) {
+    if (dec.kind === 'up') return '+' + p.step + ' U';
+    if (dec.kind === 'down') return '−' + p.cut + '%';
+    return '維持';
+  }
+  function decLong(dec, p) {
+    if (dec.kind === 'up') return '平均 ' + r1(dec.avg) + ' 偏高 → 加 ' + p.step + ' U，隔天起 ' + dec.next + ' U';
+    if (dec.kind === 'down') return '低血糖 → 減 ' + p.cut + '%，隔天起 ' + dec.next + ' U';
+    if (dec.kind === 'holdlow') return '平均 ' + r1(dec.avg) + ' 略低 → 維持 ' + dec.next + ' U';
+    return '平均 ' + r1(dec.avg) + ' 達標 → 維持 ' + dec.next + ' U';
+  }
+
+  /* ---------- render: inputs side ---------- */
+  function renderDates(evalDate) {
+    for (var i = 0; i < 3; i++) setText('date' + i, mdw(addDays(evalDate, i - 2)));
+  }
+  function renderGauge(fpgs, p) {
+    function pos(v) { return clamp((v - 40) / 260, 0, 1) * 100; }
+    $('gHypo').style.width = pos(p.hypo) + '%';
+    $('gTarget').style.left = pos(p.lo) + '%';
+    $('gTarget').style.width = (pos(p.hi) - pos(p.lo)) + '%';
+    fpgs.forEach(function (v, i) {
+      var dot = $('gDot' + i);
+      dot.hidden = !Number.isFinite(v);
+      if (Number.isFinite(v)) { dot.style.left = pos(v) + '%'; dot.classList.toggle('low', v < p.hypo); }
+    });
+    var all = fpgs.every(Number.isFinite);
+    $('gAvg').hidden = !all;
+    $('gAvgLabel').hidden = !all;
+    if (all) {
+      var avg = sum(fpgs) / 3;
+      $('gAvg').style.left = pos(avg) + '%';
+      $('gAvgLabel').style.left = clamp(pos(avg), 15, 85) + '%';
+      $('gAvgLabel').innerHTML = '平均 <span class="num-font">' + r1(avg) + '</span>';
+    }
+    setText('capTarget', p.lo + '–' + p.hi);
+    setText('capHypo', String(p.hypo));
+  }
+
+  function showError(msg) {
+    $('resBody').hidden = true;
+    $('resError').hidden = false;
+    $('resError').textContent = msg;
+    var pill = $('pill');
+    pill.className = 'pill is-none';
+    pill.textContent = '待輸入';
+    document.querySelectorAll('.rule').forEach(function (li) { li.classList.remove('active'); });
+  }
+
+  function renderResult(r, dose, fpgs, p, evalDate) {
+    $('resBody').hidden = false;
+    $('resError').hidden = true;
+    var pill = $('pill');
+    var label = r.kind === 'up' ? '加量' : r.kind === 'down' ? '減量' : '維持';
+    pill.className = 'pill ' + kindClass(r.kind);
+    pill.innerHTML = ICON[r.kind === 'up' ? 'up' : r.kind === 'down' ? 'down' : 'hold'] + '<span>' + label + '</span>';
+
+    setText('newDose', String(r.next));
+    $('fromTo').innerHTML = '目前 <b>' + dose + ' U</b> → 建議 <b>' + r.next + ' U</b>';
+    var chip = $('deltaChip');
+    chip.className = 'delta-chip ' + kindClass(r.kind);
+    chip.textContent = r.delta === 0 ? '劑量不變' : signed(r.delta) + ' U';
+
+    setText('reason', reasonText(r, dose, fpgs, p));
+    setText('calcAvg', '(' + fpgs.join(' + ') + ') ÷ 3 = ' + r1(r.avg) + ' mg/dL');
+    setText('calcDose', doseCalc(r, dose, p));
+
+    var next = addDays(evalDate, p.interval);
+    setText('nextDate', longDate(next));
+    var m = [addDays(next, -2), addDays(next, -1), next].map(md).join('、');
+    var sub = '請在 ' + m + ' 量空腹血糖，到時再算一次。';
+    if (r.kind === 'down') sub += '若再發生低血糖，請立即聯絡醫療團隊。';
+    setText('nextSub', sub);
+
+    var ruleKey = r.kind === 'holdlow' ? 'hold' : r.kind;
+    document.querySelectorAll('.rule').forEach(function (li) {
+      li.classList.toggle('active', li.getAttribute('data-rule') === ruleKey);
+    });
+  }
+
+  /* ---------- render: simulation ---------- */
+  function renderSummary(days, p) {
+    var first = days[2].dose, last = days[days.length - 1];
+    var tail = days.slice(-3).map(function (d) { return d.fpg; });
+    var avg = sum(tail) / 3;
+    var hypos = days.filter(function (d) { return !d.obs && d.fpg < p.hypo; }).length;
+    var status = avg > p.hi ? '仍高於目標，會繼續每 ' + p.interval + ' 天小步加量'
+      : avg < p.lo ? '低於目標下限，需留意' : '已進入目標範圍';
+    var s = '劑量 ' + first + ' → ' + last.dose + ' U；最後 3 天空腹平均 ' + r1(avg) + ' mg/dL，' + status + '。';
+    if (hypos) s += '模擬中出現 ' + hypos + ' 次低血糖，當天即減量。';
+    setText('simSummary', s);
+  }
+
+  function renderTable(days, p, evalDate) {
+    var t = $('simTable');
+    t.textContent = '';
+    var head = t.createTHead().insertRow();
+    ['天', '日期', '劑量 (U)', '空腹 (mg/dL)', '評估'].forEach(function (h) {
+      var th = document.createElement('th'); th.scope = 'col'; th.textContent = h; head.appendChild(th);
+    });
+    var body = t.createTBody();
+    days.forEach(function (d) {
+      var tr = body.insertRow();
+      if (d.obs) tr.className = 'obs';
+      var cells = [
+        (d.day > 0 ? '+' : '') + d.day + (d.obs ? '（輸入）' : ''),
+        mdw(addDays(evalDate, d.day)),
+        String(d.dose),
+        String(d.fpg),
+        d.dec ? decLong(d.dec, p) : ''
+      ];
+      cells.forEach(function (c, i) {
+        var td = tr.insertCell(); td.textContent = c;
+        if (i === 3 && d.fpg < p.hypo) td.className = 'low';
+        if (i === 4 && d.dec) td.className = 'dec';
+      });
+    });
+  }
+
+  var NS = 'http://www.w3.org/2000/svg';
+  function node(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function text(parent, x, y, s, cls, anchor) {
+    var t = node('text', { x: x, y: y, 'class': cls || '', 'text-anchor': anchor || 'start' }, parent);
+    t.textContent = s;
+    return t;
+  }
+  function niceTicks(lo, hi, steps, maxN) {
+    for (var i = 0; i < steps.length; i++) {
+      var s = steps[i], a = Math.floor(lo / s) * s, b = Math.ceil(hi / s) * s;
+      if ((b - a) / s <= maxN) return { a: a, b: b, s: s };
+    }
+    var z = steps[steps.length - 1];
+    return { a: Math.floor(lo / z) * z, b: Math.ceil(hi / z) * z, s: z };
+  }
+
+  function drawChart() {
+    if (!view) return;
+    var days = view.days, p = view.p;
+    var wrap = $('chart'), svg = $('chartSvg');
+    var W = Math.max(280, Math.floor(wrap.clientWidth));
+    lastW = W;
+    var rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 18;
+    var fs = Math.round(rem * 0.8);
+    var L = Math.round(fs * 3), R = Math.round(fs * 2.6);
+    var pw = W - L - R;
+    var h1 = Math.round(fs * 8), h2 = Math.round(fs * 13);
+    var y1Top = Math.round(fs * 3.4), y1Bot = y1Top + h1;
+    var t2 = y1Bot + Math.round(fs * 2.4);
+    var y2Top = t2 + Math.round(fs * 1.4), y2Bot = y2Top + h2;
+    var H = y2Bot + Math.round(fs * 3.3);
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.style.fontSize = fs + 'px';
+    svg.textContent = '';
+    var d0 = -2.5, d1 = SIM_DAYS + 0.5;
+    function X(d) { return L + (d - d0) / (d1 - d0) * pw; }
+
+    /* panel titles */
+    text(svg, 0, Math.round(fs * 1.1), '每日劑量（U）', 'c-title');
+    text(svg, 0, t2, '空腹血糖（mg/dL）', 'c-title');
+
+    /* observed-days shading */
+    node('rect', { x: X(d0), y: y1Top, width: X(0.5) - X(d0), height: h1, 'class': 'c-obs' }, svg);
+    node('rect', { x: X(d0), y: y2Top, width: X(0.5) - X(d0), height: h2, 'class': 'c-obs' }, svg);
+
+    /* dose scale */
+    var doses = days.map(function (d) { return d.dose; });
+    var dmin = Math.min.apply(null, doses), dmax = Math.max.apply(null, doses);
+    var dt = niceTicks(Math.max(0, dmin - 2), dmax + 2, [1, 2, 5, 10, 20, 50], 4);
+    if ((dt.b - dmax) / (dt.b - dt.a) < 0.2) dt.b += dt.s;
+    function Y1(v) { return y1Bot - (v - dt.a) / (dt.b - dt.a) * h1; }
+    for (var v = dt.a; v <= dt.b + 1e-9; v += dt.s) {
+      var yy = Y1(v);
+      node('line', { x1: L, x2: L + pw, y1: yy, y2: yy, 'class': v === dt.a ? 'c-base' : 'c-grid' }, svg);
+      text(svg, L - 8, yy + fs * 0.35, String(v), 'c-tick', 'end');
+    }
+
+    /* FPG scale */
+    var vals = days.map(function (d) { return d.fpg; });
+    var vmin = Math.min.apply(null, vals), vmax = Math.max.apply(null, vals);
+    var ft = niceTicks(Math.min(60, p.hypo - 10, vmin - 25), Math.max(p.hi + 30, vmax + 15), [10, 20, 25, 50, 100], 5);
+    function Y2(v) { return y2Bot - (v - ft.a) / (ft.b - ft.a) * h2; }
+    node('rect', { x: L, y: Y2(p.hi), width: pw, height: Y2(p.lo) - Y2(p.hi), 'class': 'c-band' }, svg);
+    for (var w = ft.a; w <= ft.b + 1e-9; w += ft.s) {
+      var y2 = Y2(w);
+      node('line', { x1: L, x2: L + pw, y1: y2, y2: y2, 'class': w === ft.a ? 'c-base' : 'c-grid' }, svg);
+      text(svg, L - 8, y2 + fs * 0.35, String(w), 'c-tick', 'end');
+    }
+    node('line', { x1: L, x2: L + pw, y1: Y2(p.hypo), y2: Y2(p.hypo), 'class': 'c-hypo' }, svg);
+
+    /* evaluation lines + labels */
+    var lastLx = -Infinity;
+    days.forEach(function (d) {
+      if (!d.dec) return;
+      var x = X(d.day + 0.5);
+      node('line', { x1: x, x2: x, y1: y1Top, y2: y1Bot, 'class': 'c-eval' }, svg);
+      node('line', { x1: x, x2: x, y1: y2Top, y2: y2Bot, 'class': 'c-eval' }, svg);
+      if (x - lastLx > fs * 3.1) {
+        text(svg, x, y1Top - Math.round(fs * 0.75), decShort(d.dec, p), 'c-dec' + (d.dec.kind === 'down' ? ' down' : ''), 'middle');
+        lastLx = x;
+      }
+    });
+
+    /* dose step line */
+    var path = '';
+    days.forEach(function (d, i) {
+      var y = Y1(d.dose);
+      path += (i === 0 ? 'M' + X(d.day - 0.5) + ',' + y : 'V' + y) + 'H' + X(d.day + 0.5);
+    });
+    node('path', { d: path + 'V' + y1Bot + 'H' + X(d0) + 'Z', 'class': 'c-dose-area' }, svg);
+    node('path', { d: path, 'class': 'c-dose' }, svg);
+    days.forEach(function (d, i) {
+      if (i === 0 || d.dose !== days[i - 1].dose) {
+        text(svg, X(d.day - 0.5) + 5, Y1(d.dose) - 8, d.dose + ' U', 'c-val');
+      }
+    });
+
+    /* FPG line + dots */
+    var pts = days.map(function (d) { return [X(d.day), Y2(d.fpg)]; });
+    node('path', { d: 'M' + pts.map(function (q) { return q[0] + ',' + q[1]; }).join('L'), 'class': 'c-fpg' }, svg);
+    days.forEach(function (d, i) {
+      var low = d.fpg < p.hypo;
+      node('circle', {
+        cx: pts[i][0], cy: pts[i][1], r: low ? 6 : 4.5,
+        'class': 'c-dot' + (low ? ' low' : d.obs ? ' obs' : '')
+      }, svg);
+      if (low) text(svg, pts[i][0], pts[i][1] + fs * 1.4, String(d.fpg), 'c-low-val', 'middle');
+    });
+    var lastD = days[days.length - 1];
+    text(svg, L + pw + 8, Y2(lastD.fpg) + fs * 0.35, String(lastD.fpg), 'c-val');
+
+    /* x axis */
+    var every = pw / (d1 - d0) >= fs * 1.9 ? 1 : 2;
+    for (var dd = -2; dd <= SIM_DAYS; dd++) {
+      var xx = X(dd);
+      node('line', { x1: xx, x2: xx, y1: y2Bot, y2: y2Bot + 5, 'class': 'c-base' }, svg);
+      if ((dd + 2) % every === 0) text(svg, xx, y2Bot + fs * 1.45, String(dd), 'c-tick', 'middle');
+    }
+    text(svg, L + pw / 2, y2Bot + fs * 2.9, '第幾天（0 = 評估日 ' + md(view.evalDate) + '）', 'c-axis-cap', 'middle');
+
+    /* hover layer */
+    var c1 = node('line', { y1: y1Top, y2: y1Bot, 'class': 'c-cross', visibility: 'hidden' }, svg);
+    var c2 = node('line', { y1: y2Top, y2: y2Bot, 'class': 'c-cross', visibility: 'hidden' }, svg);
+    var hd = node('circle', { r: 6, 'class': 'c-hover-dose', visibility: 'hidden' }, svg);
+    var hf = node('circle', { r: 7, 'class': 'c-hover-fpg', visibility: 'hidden' }, svg);
+    node('rect', { x: L, y: y1Top - fs * 1.5, width: pw, height: y2Bot - y1Top + fs * 1.5, 'class': 'c-hit' }, svg);
+    view.geo = { X: X, Y1: Y1, Y2: Y2, c: [c1, c2], hd: hd, hf: hf, W: W, L: L, pw: pw, d0: d0, d1: d1, y1Top: y1Top, y2Top: y2Top };
+    if (view.hover != null) showDay(view.hover);
+  }
+
+  function showDay(day) {
+    if (!view || !view.geo) return;
+    var g = view.geo, p = view.p;
+    day = clamp(day, -2, SIM_DAYS);
+    var d = view.days[day + 2];
+    if (!d) return;
+    view.hover = day;
+    var x = g.X(day);
+    g.c.forEach(function (c) { c.setAttribute('x1', x); c.setAttribute('x2', x); c.setAttribute('visibility', 'visible'); });
+    g.hd.setAttribute('cx', x); g.hd.setAttribute('cy', g.Y1(d.dose)); g.hd.setAttribute('visibility', 'visible');
+    g.hf.setAttribute('cx', x); g.hf.setAttribute('cy', g.Y2(d.fpg)); g.hf.setAttribute('visibility', 'visible');
+
+    var tip = $('tip');
+    tip.textContent = '';
+    var date = addDays(view.evalDate, day);
+    var head = document.createElement('div');
+    head.className = 'tip-head';
+    head.textContent = '第 ' + day + ' 天・' + mdw(date) + (d.obs ? '・輸入值' : '・模擬');
+    tip.appendChild(head);
+    function row(color, value, unit) {
+      var r = document.createElement('div'); r.className = 'tip-row';
+      var k = document.createElement('i'); k.className = 'tip-key'; k.style.background = color;
+      var b = document.createElement('b'); b.textContent = value;
+      var u = document.createElement('span'); u.textContent = unit;
+      r.appendChild(k); r.appendChild(b); r.appendChild(u);
+      tip.appendChild(r);
+    }
+    row('var(--dose)', String(d.dose), 'U 劑量');
+    row(d.fpg < p.hypo ? 'var(--crit)' : 'var(--fpg)', String(d.fpg), 'mg/dL 空腹' + (d.fpg < p.hypo ? '（低血糖）' : ''));
+    if (d.dec) {
+      var dec = document.createElement('div'); dec.className = 'tip-dec';
+      dec.textContent = '評估：' + decLong(d.dec, p);
+      tip.appendChild(dec);
+    }
+    tip.hidden = false;
+    var svgRect = $('chartSvg').getBoundingClientRect();
+    var scale = svgRect.width / g.W;
+    var px = x * scale;
+    var tw = tip.offsetWidth, wrapW = $('chart').clientWidth;
+    var left = px + 14;
+    if (left + tw > wrapW) left = px - 14 - tw;
+    left = clamp(left, 0, Math.max(0, wrapW - tw));
+    tip.style.transform = 'translate(' + Math.round(left) + 'px,' + Math.round(g.y1Top * scale) + 'px)';
+  }
+  function hideDay() {
+    if (!view || !view.geo) return;
+    view.hover = null;
+    var g = view.geo;
+    g.c.concat([g.hd, g.hf]).forEach(function (n) { n.setAttribute('visibility', 'hidden'); });
+    $('tip').hidden = true;
+  }
+
+  (function wireChart() {
+    var svg = $('chartSvg');
+    function dayFromEvent(e) {
+      var g = view && view.geo; if (!g) return null;
+      var rect = svg.getBoundingClientRect();
+      var x = (e.clientX - rect.left) * (g.W / rect.width);
+      return Math.round(g.d0 + (x - g.L) / g.pw * (g.d1 - g.d0));
+    }
+    svg.addEventListener('pointermove', function (e) {
+      if (e.target.getAttribute('class') !== 'c-hit' && view && view.hover == null) return;
+      var d = dayFromEvent(e); if (d != null) showDay(d);
+    });
+    svg.addEventListener('pointerdown', function (e) { var d = dayFromEvent(e); if (d != null) showDay(d); });
+    svg.addEventListener('pointerleave', function (e) { if (e.pointerType !== 'touch') hideDay(); });
+    svg.addEventListener('focus', function () { showDay(view && view.hover != null ? view.hover : 0); });
+    svg.addEventListener('blur', hideDay);
+    svg.addEventListener('keydown', function (e) {
+      if (!view) return;
+      var cur = view.hover != null ? view.hover : 0;
+      if (e.key === 'ArrowRight') { showDay(cur + 1); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { showDay(cur - 1); e.preventDefault(); }
+      else if (e.key === 'Home') { showDay(-2); e.preventDefault(); }
+      else if (e.key === 'End') { showDay(SIM_DAYS); e.preventDefault(); }
+      else if (e.key === 'Escape') { hideDay(); }
+    });
+  })();
+
+  /* ---------- main update ---------- */
+  function matchPreset() {
+    var dose = readNum('dose');
+    var f = [readNum('fpg0'), readNum('fpg1'), readNum('fpg2')];
+    var symp = $('hypoYes').checked;
+    document.querySelectorAll('[data-preset]').forEach(function (b) {
+      var pr = PRESETS[b.getAttribute('data-preset')];
+      var same = pr.dose === dose && pr.symp === symp && pr.fpg.every(function (v, i) { return v === f[i]; });
+      b.setAttribute('aria-pressed', same ? 'true' : 'false');
+    });
+  }
+
+  function update() {
+    var p = readParams();
+    var pv = p.ok ? p : DEF;
+    echo('interval', String(pv.interval));
+    echo('hypo', String(pv.hypo));
+    echo('hi', String(isInt(p.hi) ? p.hi : DEF.hi));
+    echo('range', pv.lo + '–' + pv.hi);
+    $('paramError').hidden = p.ok;
+    $('paramError').textContent = p.ok ? '' : p.errs.join('；') + '。';
+
+    var evalDate = parseISO($('evalDate').value) || new Date();
+    evalDate = new Date(evalDate.getFullYear(), evalDate.getMonth(), evalDate.getDate());
+    renderDates(evalDate);
+
+    var dose = readNum('dose');
+    var fpgs = [readNum('fpg0'), readNum('fpg1'), readNum('fpg2')];
+    var symp = $('hypoYes').checked;
+
+    var doseOk = isInt(dose) && dose >= 1 && dose <= 300;
+    $('dose').classList.toggle('bad', $('dose').value.trim() !== '' && !doseOk);
+    var fpgOk = fpgs.map(function (v, i) {
+      var ok = Number.isFinite(v) && v >= 20 && v <= 600;
+      var inp = $('fpg' + i);
+      inp.classList.toggle('bad', inp.value.trim() !== '' && !ok);
+      var low = ok && v < pv.hypo;
+      inp.classList.toggle('low', low);
+      $('flag' + i).textContent = low ? '低於 ' + pv.hypo : '';
+      return ok;
+    });
+    renderGauge(fpgs.map(function (v, i) { return fpgOk[i] ? v : NaN; }), pv);
+
+    var lows = fpgs.map(function (v, i) { return fpgOk[i] && v < pv.hypo ? i : -1; }).filter(function (i) { return i >= 0; });
+    var note = $('autoNote');
+    if (lows.length && !symp) {
+      note.hidden = false;
+      note.textContent = lows.map(dayName).join('、') + '空腹低於 ' + pv.hypo + '，即使選「沒有」，也自動視為低血糖。';
+    } else {
+      note.hidden = true;
+    }
+    matchPreset();
+
+    if (!p.ok) { showError('規則參數需要修正：' + p.errs[0] + '。'); view = null; clearSim('規則參數修正後才會顯示模擬。'); return; }
+    if (!doseOk) { showError('請輸入目前每日劑量（1–300 的整數 U）。'); view = null; clearSim('請先完成上方輸入。'); return; }
+    if (!fpgOk.every(Boolean)) { showError('請輸入 3 天空腹血糖（20–600 mg/dL）。'); view = null; clearSim('請先完成上方輸入。'); return; }
+
+    var r = decide(dose, fpgs, symp, p);
+    renderResult(r, dose, fpgs, p, evalDate);
+
+    var sim = readSim();
+    if (!sim.ok) { view = null; clearSim('模擬病人參數：每 1 U 下降請填 1–10，隨機變動請填 0–30。'); return; }
+    var days = simulate(dose, fpgs, symp, p, sim);
+    var hover = view ? view.hover : null;
+    view = { days: days, p: p, evalDate: evalDate, hover: hover };
+    renderSummary(days, p);
+    renderTable(days, p, evalDate);
+    $('chart').hidden = false;
+    drawChart();
+  }
+  function clearSim(msg) {
+    setText('simSummary', msg);
+    $('chart').hidden = true;
+    $('tip').hidden = true;
+    $('simTable').textContent = '';
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('input', function (e) {
+    if (e.target.matches('input')) update();
+  });
+  document.addEventListener('change', function (e) {
+    if (e.target.matches('input[type="radio"], input[type="date"]')) update();
+  });
+  document.querySelectorAll('.step-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var cur = readNum('dose');
+      var n = clamp((Number.isFinite(cur) ? Math.round(cur) : 20) + Number(b.getAttribute('data-step')), 1, 300);
+      $('dose').value = n;
+      update();
+    });
+  });
+  document.querySelectorAll('[data-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var pr = PRESETS[b.getAttribute('data-preset')];
+      $('dose').value = pr.dose;
+      pr.fpg.forEach(function (v, i) { $('fpg' + i).value = v; });
+      $(pr.symp ? 'hypoYes' : 'hypoNo').checked = true;
+      update();
+    });
+  });
+  $('resetParams').addEventListener('click', function () {
+    $('pLo').value = DEF.lo; $('pHi').value = DEF.hi; $('pStep').value = DEF.step;
+    $('pInterval').value = DEF.interval; $('pHypo').value = DEF.hypo;
+    $('cut' + DEF.cut).checked = true;
+    update();
+  });
+  $('reroll').addEventListener('click', function () {
+    seed = (seed + 0x9E3779B9) >>> 0;
+    update();
+  });
+  $('bigText').addEventListener('click', function () {
+    var on = document.documentElement.classList.toggle('big');
+    this.setAttribute('aria-pressed', on ? 'true' : 'false');
+    drawChart();
+  });
+  $('inputs').addEventListener('submit', function (e) { e.preventDefault(); });
+
+  if (window.ResizeObserver) {
+    new ResizeObserver(function () {
+      if ($('chart').clientWidth !== lastW) drawChart();
+    }).observe($('chart'));
+  } else {
+    window.addEventListener('resize', drawChart);
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawChart);
+
+  $('evalDate').value = iso(new Date());
+  update();
+})();
+</script>
+</body>
+</html>
