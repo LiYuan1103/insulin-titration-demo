@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>控糖之巔｜基礎胰島素 × AI 示範工具</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="郭力源醫師「控糖之巔」演講的現場工具入口：基礎胰島素滴定示範計算器、固定規則 vs 貝氏方法模擬器與講義。教學示範與模擬工具，非臨床決策工具。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="控糖之巔｜基礎胰島素 × AI 示範工具">
+<meta property="og:description" content="講者 郭力源 醫師。今天示範的基礎胰島素滴定計算器與貝氏方法模擬器，手機直接開啟使用。">
+<meta property="og:url" content="https://liyuan1103.github.io/insulin-titration-demo/start.html">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#eef2f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a1014" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231c5cab'/%3E%3Cpath d='M6 24h7v-6h6v-6h7' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+TC:wght@400;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&text=%E6%8E%A7%E7%B3%96%E4%B9%8B%E5%B7%94&display=swap">
+<style>
+/* 版面：手機優先單欄。標題 → 兩張工具卡（寬螢幕並排）→ 講義 → 依角色的一小步 → 分享網址；
+   免責聲明固定在畫面底部。色彩沿用兩個工具頁：計算器＝藍、貝氏方法＝橘、
+   空腹血糖目標範圍＝綠帶、免責橫幅＝深底加琥珀線。 */
+:root {
+  --bg: #eef2f5;
+  --surface: #ffffff;
+  --ink: #0a1620;
+  --ink-2: #2f3f4b;
+  --muted: #52616c;
+  --line: #c9d3da;
+  --accent: #1c5cab;
+  --accent-wash: #e2edfb;
+  --dose: #2a78d6;
+  --fpg: #6250d6;
+  --bayes: #eb6834;
+  --bayes-text: #a8410f;
+  --bayes-wash: #fdeee6;
+  --band: rgba(12, 163, 12, 0.20);
+  --band-edge: rgba(12, 163, 12, 0.55);
+  --pending-bg: #e4e9ed;
+  --pending-ink: #3d4b55;
+  --banner-bg: #0a1620;
+  --banner-fg: #ffffff;
+  --banner-mark: #fab219;
+  --focus: #1849c6;
+  --font-display: "Noto Serif TC", "Noto Serif CJK TC", "Songti TC", "PMingLiU", serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", "Noto Sans CJK TC", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 16px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a1014;
+    --surface: #131c23;
+    --ink: #eef3f6;
+    --ink-2: #c7d1d8;
+    --muted: #9eabb5;
+    --line: #2e3b46;
+    --accent: #7cb2f0;
+    --accent-wash: rgba(57, 135, 229, 0.20);
+    --dose: #3987e5;
+    --fpg: #9085e9;
+    --bayes: #e08a3c;
+    --bayes-text: #f4ad6b;
+    --bayes-wash: rgba(208, 127, 42, 0.20);
+    --band: rgba(12, 163, 12, 0.30);
+    --band-edge: rgba(76, 203, 76, 0.65);
+    --pending-bg: #1f2a33;
+    --pending-ink: #c7d1d8;
+    --banner-bg: #1b262e;
+    --banner-fg: #ffffff;
+    --banner-mark: #fab219;
+    --focus: #8ab4ff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a1014;
+  --surface: #131c23;
+  --ink: #eef3f6;
+  --ink-2: #c7d1d8;
+  --muted: #9eabb5;
+  --line: #2e3b46;
+  --accent: #7cb2f0;
+  --accent-wash: rgba(57, 135, 229, 0.20);
+  --dose: #3987e5;
+  --fpg: #9085e9;
+  --bayes: #e08a3c;
+  --bayes-text: #f4ad6b;
+  --bayes-wash: rgba(208, 127, 42, 0.20);
+  --band: rgba(12, 163, 12, 0.30);
+  --band-edge: rgba(76, 203, 76, 0.65);
+  --pending-bg: #1f2a33;
+  --pending-ink: #c7d1d8;
+  --banner-bg: #1b262e;
+  --banner-fg: #ffffff;
+  --banner-mark: #fab219;
+  --focus: #8ab4ff;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html {
+  font-size: 112.5%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+@media (min-width: 1200px) { html { font-size: 125%; } }
+:root {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+[hidden] { display: none !important; }
+h1, h2, h3 { text-wrap: balance; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 1.75rem 8rem;
+  display: grid;
+  gap: 2.75rem;
+}
+
+/* ---------- masthead ---------- */
+.masthead { display: grid; gap: 0.9rem; min-width: 0; }
+.eyebrow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+.eyebrow li {
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  padding: 0.1rem 0.7rem;
+  background: var(--surface);
+}
+.title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.title-main {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3rem, 14vw, 4.4rem);
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+}
+.title-bar { color: var(--muted); font-weight: 400; }
+.title-sub {
+  font-weight: 900;
+  font-size: clamp(1.35rem, 6.4vw, 2rem);
+  letter-spacing: 0.01em;
+}
+.title-sub .x { font-weight: 400; color: var(--muted); padding: 0 0.12em; }
+@media (max-width: 47.99rem) {
+  .title-bar {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (min-width: 48rem) {
+  .title { flex-direction: row; flex-wrap: wrap; align-items: baseline; }
+  .title-bar { font-size: 2rem; padding: 0 0.1em; }
+}
+.speaker {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.speaker-label {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin-right: 0.6em;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- sections ---------- */
+.sec { display: grid; gap: 1rem; min-width: 0; }
+.sec-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+.sec-lede { color: var(--ink-2); }
+
+/* ---------- tool cards ---------- */
+.tool-grid {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 46rem) {
+  .tool-grid { grid-template-columns: 1fr 1fr; }
+}
+.tool {
+  --tool: var(--accent);
+  --tool-text: var(--accent);
+  --tool-wash: var(--accent-wash);
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 1.25rem 1.25rem 1.1rem;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.tool--bayes {
+  --tool: var(--bayes);
+  --tool-text: var(--bayes-text);
+  --tool-wash: var(--bayes-wash);
+}
+.tool:hover { border-color: var(--tool); }
+.tool:active { transform: scale(0.99); }
+.tool:has(a:focus-visible) { border-color: var(--tool); outline: 3px solid var(--focus); outline-offset: 3px; }
+.tool-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.tool-kind {
+  display: inline-block;
+  padding: 0.15rem 0.75rem;
+  border-radius: 999px;
+  background: var(--tool-wash);
+  color: var(--tool-text);
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+.spark {
+  width: 7.5rem;
+  max-width: 45%;
+  height: auto;
+  flex: none;
+}
+.spark .band { fill: var(--band); }
+.spark .band-edge { stroke: var(--band-edge); stroke-width: 1; fill: none; stroke-dasharray: 3 3; }
+.spark .dot { fill: var(--fpg); }
+.spark .tick { stroke: var(--muted); stroke-width: 1.5; stroke-linecap: round; }
+.spark .line-fixed { fill: none; stroke: var(--dose); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.spark .line-bayes { fill: none; stroke: var(--bayes); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.tool-name {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+.tool-name a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.tool-name .nw { white-space: nowrap; }
+.tool-name a:focus-visible { outline: none; }
+.tool-name a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+}
+.tool-desc {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.tool-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.9rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.tool-meta .mono { font-family: var(--font-mono); font-weight: 500; }
+.key { display: inline-flex; align-items: center; gap: 0.35rem; }
+.key::before {
+  content: "";
+  width: 0.9rem;
+  height: 0.25rem;
+  border-radius: 2px;
+  background: var(--key);
+}
+.key--fixed { --key: var(--dose); }
+.key--bayes { --key: var(--bayes); }
+.key--band::before { height: 0.6rem; background: var(--band); outline: 1px dashed var(--band-edge); }
+.key--fpg::before { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--fpg); }
+.tool-go {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 3.1rem;
+  padding: 0 1rem;
+  border-radius: 12px;
+  background: var(--tool-wash);
+  color: var(--tool-text);
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+.tool-go svg { width: 1.3rem; height: 1.3rem; flex: none; transition: transform 0.15s ease; }
+.tool:hover .tool-go svg { transform: translateX(3px); }
+
+/* ---------- handout ---------- */
+.handout {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.25rem;
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+}
+@media (min-width: 46rem) {
+  .handout { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 1.5rem; }
+}
+.handout-text { display: grid; gap: 0.3rem; min-width: 0; }
+.handout-note { color: var(--ink-2); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 3.2rem;
+  padding: 0 1.4rem;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.3;
+}
+.btn svg { width: 1.25rem; height: 1.25rem; flex: none; }
+.btn--ready { background: var(--ink); color: var(--bg); }
+.btn--ready:hover { background: var(--accent); color: var(--surface); }
+.btn--pending {
+  background: var(--pending-bg);
+  color: var(--pending-ink);
+  border-color: var(--line);
+  cursor: not-allowed;
+}
+
+/* ---------- role steps ---------- */
+.roles {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+@media (min-width: 46rem) {
+  .roles { grid-template-columns: 1fr 1fr; }
+}
+.role {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+  min-width: 0;
+  padding: 1rem 1.1rem 1.1rem;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+.role dt {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+.role dd {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.role .mono { font-family: var(--font-mono); font-weight: 600; }
+
+/* ---------- share ---------- */
+.share {
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.share-label { font-size: 0.9rem; color: var(--muted); font-weight: 700; }
+.share-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+}
+.share-url {
+  min-width: 0;
+  flex: 1 1 16rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+  user-select: all;
+  -webkit-user-select: all;
+  color: var(--ink);
+}
+.copy-btn {
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.copy-btn:hover { border-color: var(--ink-2); }
+.copy-status { font-size: 0.9rem; color: var(--ink-2); min-height: 1.4em; }
+.privacy { font-size: 0.9rem; color: var(--muted); }
+
+/* ---------- fixed disclaimer ---------- */
+.disclaimer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding-top: 0.75rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--banner-bg);
+  color: var(--banner-fg);
+  border-top: 4px solid var(--banner-mark);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.45;
+  text-align: center;
+}
+.disclaimer svg { width: 1.4rem; height: 1.4rem; flex: none; }
+.disclaimer .tri { fill: var(--banner-mark); }
+.disclaimer .bang { fill: var(--banner-bg); }
+.disclaimer span { text-wrap: balance; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tool, .tool-go svg { transition: none; }
+  .tool:active { transform: none; }
+  .tool:hover .tool-go svg { transform: none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <ul class="eyebrow" aria-label="這個頁面">
+      <li>演講現場工具</li>
+      <li>免登入・免安裝</li>
+      <li>不蒐集任何資料</li>
+    </ul>
+    <h1 class="title">
+      <span class="title-main">控糖之巔</span><span class="title-bar">｜</span><span class="title-sub">基礎胰島素<span class="x">×</span>AI 示範工具</span>
+    </h1>
+    <p class="speaker"><span class="speaker-label">講者</span>郭力源 醫師</p>
+  </header>
+
+  <section class="sec" aria-labelledby="h-tools">
+    <h2 class="sec-title" id="h-tools">今天示範的兩個工具</h2>
+    <div class="tool-grid">
+
+      <article class="tool">
+        <div class="tool-head">
+          <span class="tool-kind">計算器</span>
+          <svg class="spark" viewBox="0 0 120 48" aria-hidden="true">
+            <rect class="band" x="0" y="26" width="120" height="12"/>
+            <path class="band-edge" d="M0 26H120M0 38H120"/>
+            <circle class="dot" cx="5" cy="5" r="2.6"/>
+            <circle class="dot" cx="13" cy="7" r="2.6"/>
+            <circle class="dot" cx="21" cy="6" r="2.6"/>
+            <circle class="dot" cx="29" cy="10" r="2.6"/>
+            <circle class="dot" cx="37" cy="12" r="2.6"/>
+            <circle class="dot" cx="45" cy="13" r="2.6"/>
+            <circle class="dot" cx="53" cy="17" r="2.6"/>
+            <circle class="dot" cx="61" cy="19" r="2.6"/>
+            <circle class="dot" cx="69" cy="20" r="2.6"/>
+            <circle class="dot" cx="77" cy="24" r="2.6"/>
+            <circle class="dot" cx="85" cy="27" r="2.6"/>
+            <circle class="dot" cx="93" cy="29" r="2.6"/>
+            <circle class="dot" cx="101" cy="31" r="2.6"/>
+            <circle class="dot" cx="109" cy="30" r="2.6"/>
+            <circle class="dot" cx="117" cy="32" r="2.6"/>
+            <path class="tick" d="M25 43v4M49 43v4M73 43v4M97 43v4"/>
+          </svg>
+        </div>
+        <h3 class="tool-name"><a href="index.html">基礎胰島素滴定示範計算器</a></h3>
+        <p class="tool-desc">輸入目前劑量和最近 3 天的空腹血糖，就會算出下一次的建議劑量和理由，還能看接下來 14 天的模擬變化。</p>
+        <p class="tool-meta">
+          <span class="mono">Glargine U300</span>
+          <span>每 3 天評估一次</span>
+          <span class="key key--fpg">空腹血糖</span>
+          <span class="key key--band">目標範圍</span>
+        </p>
+        <span class="tool-go" aria-hidden="true">開啟計算器<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+      </article>
+
+      <article class="tool tool--bayes">
+        <div class="tool-head">
+          <span class="tool-kind">模擬器</span>
+          <svg class="spark" viewBox="0 0 120 48" aria-hidden="true">
+            <rect class="band" x="0" y="26" width="120" height="12"/>
+            <path class="band-edge" d="M0 26H120M0 38H120"/>
+            <polyline class="line-fixed" points="3,5 18,7 33,10 48,14 63,18 78,22 93,25 117,28"/>
+            <polyline class="line-bayes" points="3,5 18,11 33,19 48,26 63,30 78,31 93,31 117,31"/>
+          </svg>
+        </div>
+        <h3 class="tool-name"><a href="bayes.html"><span class="nw">固定規則 vs 貝氏方法</span> <span class="nw">教學模擬器</span></a></h3>
+        <p class="tool-desc">同一位虛擬病人、同樣的每日血糖起伏，並排比較兩種調劑量的方法；改一改病人設定，看哪一種比較快達標、比較少低血糖。</p>
+        <p class="tool-meta">
+          <span class="key key--fixed">固定規則</span>
+          <span class="key key--bayes">貝氏方法</span>
+          <span>全部為模擬資料</span>
+        </p>
+        <span class="tool-go" aria-hidden="true">開啟模擬器<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-handout">
+    <h2 class="sec-title" id="h-handout">講義</h2>
+    <div class="handout">
+      <div class="handout-text">
+        <p>今天的投影片重點與參考文獻，會整理成講義放在這裡。</p>
+        <p class="handout-note" id="handout-note">連結補上後，重新整理這一頁就會出現。</p>
+      </div>
+      <a class="btn btn--pending" id="handout-btn" role="link" aria-disabled="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span class="btn-label">講義連結即將補上</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-steps">
+    <h2 class="sec-title" id="h-steps">今天回去就能做的一小步</h2>
+    <p class="sec-lede">依你的角色，挑一件下一次門診或衛教就能開始的事。</p>
+    <dl class="roles">
+      <div class="role">
+        <dt>醫師</dt>
+        <dd>挑一位空腹血糖還沒達標的基礎胰島素病人，把個人化的空腹血糖目標和「每 3 天看一次空腹血糖、依規則調整」的書面規則交給病人帶回家。</dd>
+      </div>
+      <div class="role">
+        <dt>衛教師</dt>
+        <dd>教病人在紀錄本上把每天的空腹血糖和當天打的劑量寫在同一行，回診時一眼就看得出劑量和血糖怎麼一起變化。</dd>
+      </div>
+      <div class="role">
+        <dt>營養師</dt>
+        <dd>請病人記下前一晚晚餐和宵夜的時間與份量，空腹血糖偏高時先一起排除是不是吃出來的，再請醫師評估要不要加劑量。</dd>
+      </div>
+      <div class="role">
+        <dt>藥師</dt>
+        <dd>交付胰島素筆時，請病人當場示範一次轉劑量和注射，並確認病人知道血糖低於 <span class="mono">70</span> mg/dL 時要先吃 <span class="mono">15</span> 公克的糖。</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="share" aria-labelledby="h-share">
+    <h2 class="share-label" id="h-share">把這一頁分享給同事</h2>
+    <div class="share-row">
+      <span class="share-url" id="page-url">https://liyuan1103.github.io/insulin-titration-demo/start.html</span>
+      <button type="button" class="copy-btn" id="copy-btn">複製網址</button>
+    </div>
+    <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
+    <p class="privacy">本頁是靜態網頁：不需登入、不使用 Cookie 或追蹤程式，也不蒐集、不傳送任何資料。</p>
+  </section>
+
+</div>
+
+<footer class="disclaimer" role="note">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path class="tri" d="M12 2.2 23 21.3H1z"/><rect class="bang" x="10.9" y="8.4" width="2.2" height="7" rx="1"/><rect class="bang" x="10.9" y="16.7" width="2.2" height="2.2" rx="1"/></svg>
+  <span>教學示範與模擬工具，非臨床決策工具，實際劑量請依醫師指示</span>
+</footer>
+
+<script>
+// ▼ 講義網址：拿到連結後只改這一行，把網址貼進引號裡（留空＝顯示「講義連結即將補上」）
+const HANDOUT_URL = "";
+
+(function setupHandout() {
+  var url = String(HANDOUT_URL || "").trim();
+  if (!url || /^javascript:/i.test(url)) return;
+  var btn = document.getElementById("handout-btn");
+  btn.href = url;
+  btn.target = "_blank";
+  btn.rel = "noopener";
+  btn.removeAttribute("role");
+  btn.removeAttribute("aria-disabled");
+  btn.classList.remove("btn--pending");
+  btn.classList.add("btn--ready");
+  btn.querySelector(".btn-label").textContent = "開啟講義";
+  btn.querySelector("svg").innerHTML = '<path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>';
+  document.getElementById("handout-note").textContent = "講義會在新分頁開啟。";
+})();
+
+(function setupCopy() {
+  var copyBtn = document.getElementById("copy-btn");
+  var urlEl = document.getElementById("page-url");
+  var statusEl = document.getElementById("copy-status");
+  function selectUrl() {
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(urlEl);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } catch (e) { /* 無法選取時就只顯示提示 */ }
+  }
+  copyBtn.addEventListener("click", function () {
+    var text = urlEl.textContent.trim();
+    var done = function () { statusEl.textContent = "已複製網址，可以貼到 LINE 或訊息裡。"; };
+    var fail = function () { selectUrl(); statusEl.textContent = "已幫你選取網址，請長按或按右鍵複製。"; };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fail);
+      } else {
+        fail();
+      }
+    } catch (e) { fail(); }
+  });
+})();
+</script>
+</body>
+</html>
