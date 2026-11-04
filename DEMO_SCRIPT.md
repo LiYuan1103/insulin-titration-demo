@@ -77,7 +77,7 @@
 **備援順序**：
 
 1. 本機檔案：直接用 Chrome 或 Edge 開 repo 裡的 `bayes.html`。不需要網路，斷網時只是字型改用系統字型（已實測）。
-2. 線上版：GitHub Pages 的 `https://liyuan1103.github.io/insulin-titration-demo/bayes.html`（聽眾掃投影片 QR code 進入口頁 `start.html` 也會連到這裡），或成品連結（artifact）。兩者都需要網路。
+2. 線上版：GitHub Pages 的 `https://liyuan1103.github.io/insulin-titration-demo/bayes.html`（聽眾掃投影片 QR code 進入口頁 `start.html` 也會連到這裡），或成品連結 `https://claude.ai/artifact/XKoyUNAARC4jcVPtFny8CK`（已更新為修正後版本；目前是私人連結，要登入你的帳號才能開）。兩者都需要網路。
 3. 截圖 `screenshots/`（1920×1080，可直接放進簡報）。
 
 **備援說法**（照讀即可）：
