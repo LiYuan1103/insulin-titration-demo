@@ -819,6 +819,8 @@ const Engine = (() => {
   const pct = (p) => {
     if (p < 0.001) return '<0.1%';
     if (p > 0.999) return '>99.9%';
+    // 4.95%–4.99…% 四捨五入會顯示成「5.0%」，看起來像違反「<5%」規則：改顯示兩位小數（無條件捨去）
+    if (p < E.P_LOW_LIMIT && p >= E.P_LOW_LIMIT - 0.0005) return (Math.floor(p * 10000) / 100).toFixed(2) + '%';
     return (p * 100).toFixed(p < 0.1 ? 1 : 0) + '%';
   };
   const fmtS = (v) => (Number.isInteger(v) ? String(v) : f1(v));
@@ -1338,7 +1340,7 @@ const Engine = (() => {
     const cov = document.createElement('span');
     const inside = S >= lo && S <= hi;
     cov.className = `cover ${inside ? 'ok' : 'bad'}`;
-    cov.textContent = inside ? '真實值落在 95% 範圍內。' : '真實值不在 95% 範圍內：先驗或模型假設和這位病人不符。';
+    cov.textContent = inside ? '真實值落在 95% 範圍內。' : '真實值不在 95% 範圍內：模型正確時也約有 5% 的機會如此；若換種子重跑仍常發生，代表先驗或模型假設和這位病人不符。';
     el.append(' ', cov);
   }
 
