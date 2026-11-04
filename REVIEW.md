@@ -127,11 +127,13 @@
 3. 演講日為 2026-11-05。`index.html` 的評估日預設為「今天」，所以截圖時把瀏覽器時間設為 2026-11-05（台北時間），讓截圖日期和現場一致。`bayes.html` 不使用日期。
 4. 「成品」連結：更新上一個工作階段已發布的同一個 artifact（保留原連結），而不是另開新連結。發布版本只去掉最外層 `<!doctype>`／`<html>`／`<head>`／`<body>` 標籤（平台會自動加上），其餘內容與 repo 的 `bayes.html` 相同。
 5. 截圖規格：1920×1080、淺色模式、裝置像素比 1；確認 Noto Sans TC 已載入後才截圖。
-6. 合併方式：本分支以 fast-forward 合併回 `main`。
+6. 合併方式：審查期間 `main` 多了另外兩個工作階段的提交（`start.html` 與 QR code、`evidence/` 證據表），和本分支沒有任何重疊檔案，所以用 merge commit 合併回 `main`，不改寫本分支歷史，文中引用的 commit 編號維持有效。
+7. 依 `qr/NOTES.md`，聽眾會用 QR code 從 GitHub Pages 開 `start.html`，再點進 `bayes.html`，所以合併回 `main` 才會讓聽眾看到修正後的版本。本環境的網路政策擋掉 github.io，無法確認 Pages 是否已重新部署，需由講者確認（方法見 DEMO_SCRIPT.md 第 5 節）。
 
 ## 五、修改清單
 
 | commit | 檔案 | 內容 |
 |---|---|---|
 | `c92e77c` | `bayes.html` | 修正 1、修正 2（+3／−1 行，引擎未動） |
-| 下一個 commit | `REVIEW.md`、`DEMO_SCRIPT.md`、`screenshots/` | 新增；沒有修改任何既有檔案 |
+| `60c0f16` 與其後的文件更新 | `REVIEW.md`、`DEMO_SCRIPT.md`、`screenshots/` | 新增；沒有修改任何既有檔案 |
+| merge commit | `main` | 把本分支合併回 `main` |
