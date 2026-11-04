@@ -1,0 +1,361 @@
+<title>基礎胰島素滴定證據</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="第二型糖尿病基礎胰島素滴定的臨床證據重點：固定規則、自我滴定、數位工具、CGM 與 AI，附 PubMed PMID。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one reading column like a clinical handout. Evidence map (stacked bars by study design) up top, five category blocks, an AI verdict panel, Q&A cards, then the reference table. */
+:root {
+  --bg: #edf1f3;
+  --surface: #ffffff;
+  --surface-2: #f3f6f8;
+  --ink: #0a1620;
+  --ink-2: #32414d;
+  --muted: #586773;
+  --line: #cdd6dc;
+  --accent: #1c5cab;
+  --accent-wash: #e2edfb;
+  --verdict-bg: #0a1620;
+  --verdict-fg: #f3f7f9;
+  --verdict-mark: #fab219;
+  --verdict-link: #9cc6f7;
+  --verdict-rule: rgba(255, 255, 255, 0.16);
+  --seg-rct: #2a78d6;
+  --seg-ma: #6250d6;
+  --seg-rw: #c98a16;
+  --seg-poc: #8d9ba6;
+  --cat1: #2f6db5;
+  --cat2: #2e8b57;
+  --cat3: #b7791f;
+  --cat4: #6b4fa3;
+  --cat5: #b23a48;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a1014;
+    --surface: #121a20;
+    --surface-2: #19232b;
+    --ink: #eef3f6;
+    --ink-2: #c4ced5;
+    --muted: #97a4ae;
+    --line: #2d3a44;
+    --accent: #6da7ec;
+    --accent-wash: rgba(57, 135, 229, 0.18);
+    --verdict-bg: #1b262e;
+    --verdict-fg: #f3f7f9;
+    --verdict-mark: #fab219;
+    --seg-rct: #4d95ea;
+    --seg-ma: #9085e9;
+    --seg-rw: #e0a63a;
+    --seg-poc: #6f7f8b;
+    --cat1: #7fb0ee;
+    --cat2: #63c08b;
+    --cat3: #e0a63a;
+    --cat4: #ad97e0;
+    --cat5: #f08b97;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a1014;
+  --surface: #121a20;
+  --surface-2: #19232b;
+  --ink: #eef3f6;
+  --ink-2: #c4ced5;
+  --muted: #97a4ae;
+  --line: #2d3a44;
+  --accent: #6da7ec;
+  --accent-wash: rgba(57, 135, 229, 0.18);
+  --verdict-bg: #1b262e;
+  --verdict-fg: #f3f7f9;
+  --verdict-mark: #fab219;
+  --seg-rct: #4d95ea;
+  --seg-ma: #9085e9;
+  --seg-rw: #e0a63a;
+  --seg-poc: #6f7f8b;
+  --cat1: #7fb0ee;
+  --cat2: #63c08b;
+  --cat3: #e0a63a;
+  --cat4: #ad97e0;
+  --cat5: #f08b97;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.page { max-width: 780px; margin: 0 auto; padding-block: 40px 64px; display: grid; gap: 40px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.3; }
+h1 { font-size: clamp(28px, 5vw, 38px); font-weight: 900; letter-spacing: 0.01em; }
+h2 { font-size: 22px; font-weight: 900; }
+h3 { font-size: 18px; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--accent); }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.num, .pmid, td.mono { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+
+/* header */
+.masthead { display: grid; gap: 14px; }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); }
+.lede { color: var(--ink-2); font-size: 17px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.meta b { color: var(--ink-2); font-weight: 700; }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; }
+.toc a { font-size: 14px; text-decoration: none; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink-2); }
+.toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+/* evidence map */
+.map { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 14px; }
+.map-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; }
+.map-head p { font-size: 13px; color: var(--muted); }
+.map-rows { display: grid; gap: 10px; }
+.map-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 2.5em; gap: 12px; align-items: center; font-size: 14px; }
+.map-row .label { font-weight: 700; }
+.bar { display: flex; height: 18px; border-radius: 4px; overflow: hidden; background: var(--surface-2); }
+.bar span { display: block; height: 100%; border-right: 2px solid var(--surface); }
+.bar span:last-child { border-right: 0; }
+.seg-rct { background: var(--seg-rct); }
+.seg-ma { background: var(--seg-ma); }
+.seg-rw { background: var(--seg-rw); }
+.seg-poc { background: var(--seg-poc); }
+.map-row .count { font-family: var(--font-num); text-align: right; color: var(--ink-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+/* category blocks */
+section { display: grid; gap: 16px; }
+.cat { display: grid; gap: 10px; padding-left: 16px; border-left: 4px solid var(--c); }
+.cat h3 { color: var(--ink); }
+.cat h3 .tag { font-family: var(--font-num); color: var(--c); margin-right: 8px; }
+.cat ol { margin: 0; padding-left: 1.4em; display: grid; gap: 8px; color: var(--ink-2); }
+.cat li::marker { color: var(--c); font-family: var(--font-num); font-weight: 600; }
+.c1 { --c: var(--cat1); } .c2 { --c: var(--cat2); } .c3 { --c: var(--cat3); } .c4 { --c: var(--cat4); } .c5 { --c: var(--cat5); }
+.pmid { font-size: 0.82em; white-space: nowrap; text-decoration: none; border-bottom: 1px dotted currentColor; }
+.pmid:hover { border-bottom-style: solid; }
+
+/* AI verdict */
+.verdict { background: var(--verdict-bg); color: var(--verdict-fg); border-radius: var(--radius); padding: 24px; display: grid; gap: 18px; }
+.verdict h2 { color: var(--verdict-fg); }
+.verdict .oneline { font-size: 18px; font-weight: 700; line-height: 1.6; padding-left: 14px; border-left: 4px solid var(--verdict-mark); }
+.verdict .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
+.verdict h3 { font-size: 15px; color: var(--verdict-mark); letter-spacing: 0.04em; margin-bottom: 6px; }
+.verdict ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; font-size: 15px; }
+.verdict a { color: var(--verdict-link); }
+.verdict .fair { font-size: 15px; padding-top: 14px; border-top: 1px solid var(--verdict-rule); }
+
+/* Q&A */
+.qa { display: grid; gap: 14px; }
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 8px; }
+.q h3 { font-size: 17px; display: flex; gap: 10px; }
+.q h3 .qn { font-family: var(--font-num); color: var(--accent); flex: none; }
+.q p { color: var(--ink-2); font-size: 15.5px; }
+
+/* references */
+.refs-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 600px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: 0.06em; color: var(--muted); background: var(--surface-2); position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; }
+td.doi { word-break: break-all; }
+
+.foot { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 6px; }
+
+@media (max-width: 560px) {
+  .page { padding-block: 24px 48px; gap: 32px; }
+  .map-row { grid-template-columns: 1fr 2.5em; }
+  .map-row .label { grid-column: 1 / -1; }
+  .verdict { padding: 20px 18px; }
+  .verdict .grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toc a, .pmid { transition: color .15s, border-color .15s; }
+}
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div class="eyebrow">第二型糖尿病 · 基礎胰島素滴定</div>
+    <h1>基礎胰島素滴定證據</h1>
+    <p class="lede">固定規則、病人自調、數位工具、CGM 與 AI：每一類目前知道什麼、還不知道什麼。給醫學會演講 Q&amp;A 與教學使用。</p>
+    <div class="meta">
+      <span>檢索日期 <b class="num">2026-11-04</b></span>
+      <span>資料來源 <b>PubMed</b></span>
+      <span>納入 <b class="num">38</b> 篇（另讀過 <span class="num">38</span> 篇排除）</span>
+      <span>數值多取自摘要，引用前請核對原文</span>
+    </div>
+    <nav class="toc" aria-label="章節">
+      <a href="#map">證據地圖</a>
+      <a href="#cats">五類重點</a>
+      <a href="#ai">AI 證據到哪裡</a>
+      <a href="#qa">台下五問</a>
+      <a href="#refs">引用文獻</a>
+    </nav>
+  </header>
+
+  <section id="map" class="map" aria-labelledby="map-title">
+    <div class="map-head">
+      <h2 id="map-title">證據地圖</h2>
+      <p>每格代表 1 篇，依研究設計上色</p>
+    </div>
+    <div class="map-rows">
+{{MAP_ROWS}}
+    </div>
+    <div class="legend">
+      <span><i class="seg-rct"></i>RCT（含群集、交叉）</span>
+      <span><i class="seg-ma"></i>系統性回顧／統合分析</span>
+      <span><i class="seg-rw"></i>真實世界</span>
+      <span><i class="seg-poc"></i>單臂概念驗證／模型／模擬</span>
+    </div>
+  </section>
+
+  <section id="cats" aria-labelledby="cats-title">
+    <h2 id="cats-title">五類證據重點</h2>
+
+    <div class="cat c1">
+      <h3><span class="tag">1</span>固定規則／treat-to-target（glargine U100、U300、degludec）</h3>
+      <ol>
+        <li>Treat-to-Target Trial 確立了現在的滴定方式：用簡單規則把空腹血糖推到 ≤100 mg/dL，約六成病人可達 HbA1c ≤7% [[14578243]]。</li>
+        <li>第二代基礎胰島素在相同目標下，HbA1c 降幅與 glargine U100 相當：EDITION 3 的 LSMD 是 0.04% [[25641260]]，BEGIN Once Long 的 ETD 是 0.09% [[23043166]]，BRIGHT 中 U300 對 degludec 的 LSMD 是 −0.05% [[30104294]]。三者的差異主要在低血糖，尤其是夜間與滴定初期。</li>
+        <li>EDITION 3 全文寫出了可直接教的 U300 規則：起始 0.2 U/kg，每週調一次；空腹 100–&lt;140 mg/dL 加 3 U、≥140 加 6 U、60–&lt;80 減 3 U；最後 U300 的劑量比 U100 多約 17% [[25641260]]。</li>
+        <li>規則可以再簡化：degludec 每週只看一次早餐前血糖來調整，效果不輸看三天平均 [[23812875]]。目標值的設定會改變低血糖風險：icodec 的目標設在 70–108 mg/dL 時，level 2 低血糖最多 [[33875484]]。</li>
+        <li>解讀時要記得兩件事。第一，treat-to-target 試驗刻意把兩組的 HbA1c 拉到一樣，所以真正在比的是低血糖。第二，這些試驗多為開放標籤、廠商參與，回診也比門診密集得多。CONCLUDE 的主要低血糖終點沒有達到顯著差異 [[31984443]]。</li>
+      </ol>
+    </div>
+
+    <div class="cat c2">
+      <h3><span class="tag">2</span>病人自我滴定 vs 醫療人員主導</h3>
+      <ol>
+        <li>讓病人依規則自己調劑量，HbA1c 和醫師主導一樣好，或略好約 0.1–0.15%，嚴重低血糖沒有增加：AT.LANTUS 的降幅是 −1.22% vs −1.08% [[15920040]]，亞洲 ATLAS 是 −1.40% vs −1.25% [[25297660]]。</li>
+        <li>代價是輕度、夜間或症狀性低血糖可能稍多：PREDICTIVE 303 為 6.44 vs 4.95 次/人/年 [[17924873]]，ATLAS 也觀察到同樣趨勢。</li>
+        <li>極簡規則就有效。例如每天加 1 U 直到空腹 ≤100 mg/dL [[16842477]]，或「303 規則」：每 3 天調一次、每次 ±3 U、目標 80–110 mg/dL [[17924873]]。</li>
+        <li>2025 年的網絡統合分析顯示，「每週自調 ≥2 次＋醫療人員支援」降 HbA1c 最多，嚴重低血糖不增加 [[40273351]]。這是目前最直接的策略比較證據。</li>
+      </ol>
+    </div>
+
+    <div class="cat c3">
+      <h3><span class="tag">3</span>數位工具／App／遠距協助</h3>
+      <ol>
+        <li>數位工具主要解決的是滴定惰性，也就是劑量遲遲沒有調到位。只用簡訊加護理師電話，12 週內調到最佳劑量的比例就從 37% 升到 88% [[26187303]]；轉成常規照護後，仍有 84% 平均 24 天調到位 [[29555621]]。</li>
+        <li>和一般照護相比，App、語音系統或遠距平台多降 HbA1c 約 0.4–1.2%：TeleDiab-2 [[31173451]]、台灣 Insultrate 多中心 RCT −0.87% vs −0.43% [[42067440]]、雲端共享決策 [[26645932]]。即使對照組也是病人自調的紙本滴定表，App 仍多降約 0.3% [[37954005]]。</li>
+        <li>ONWARDS 5 是最大的 App 引導滴定試驗，52 週 HbA1c 差 −0.38% [[37748181]]，但它同時換成了每週胰島素，無法分出 App 本身貢獻多少。</li>
+        <li>限制很一致：幾乎都是開放標籤，追蹤多半只有 12–24 週，對照組往往是本來就調得不夠的一般照護，多數有廠商參與。</li>
+      </ol>
+    </div>
+
+    <div class="cat c4">
+      <h3><span class="tag">4</span>CGM 輔助的基礎胰島素調整</h3>
+      <ol>
+        <li>只打基礎胰島素的 T2D 改用即時 CGM，HbA1c 比指尖血糖多降 0.4%、TIR 多 15%（MOBILE）[[34077499]]。</li>
+        <li>在已經使用 GLP-1RA 或 SGLT2i 的族群，CGM 搭配病人自調基礎胰島素，16 週仍多降 0.6%（FreeDM2）[[42035781]]。統合分析的整體效果約為 −0.31% [[38363342]]。</li>
+        <li>把 CGM 數值直接當成滴定依據，目前只有概念驗證與藥物試驗中的應用。用 CGM 每天調劑量，3–4 天即可讓夜間血糖達標 [[19120433]]；每週胰島素 BIF 的試驗也以 CGM 空腹值滴定 [[36758572]]。</li>
+        <li>真實世界 flash 研究顯示 HbA1c 降 1.1–1.4%，但沒有對照組 [[35058312]]。目前還找不到直接比較「CGM 導向滴定規則」與「指尖血糖滴定規則」的 RCT。</li>
+      </ol>
+    </div>
+
+    <div class="cat c5">
+      <h3><span class="tag">5</span>演算法／機器學習／強化學習／AI</h3>
+      <ol>
+        <li>人體 RCT 中，證據最強的是 d-Nav 自動劑量引導：6 個月 HbA1c −1.0% vs −0.3%，低血糖相同 [[30808512]]。不過它的演算法屬於廠商專有，多位作者是廠商人員。</li>
+        <li>2025 年的 iNCDSS 是設計最完整的 AI 滴定 RCT：住院 5 天內 TIR 不輸資深內分泌科醫師，76.4% vs 73.6% [[40332936]]。</li>
+        <li>其他多為概念驗證：語音 AI 只有 32 人、追蹤 8 週 [[38039007]]；強化學習 RL-DITR 是 16 位住院病人的單臂試驗 [[37710000]]；模型由 2 週 CGM 資料預估劑量，共 8 人，中位數低估約 27% [[31941361]]。</li>
+        <li>兩篇系統性回顧的結論相同：數學／機器學習模型的證據最少 [[36562599]]；AI 胰島素管理的 RCT 截至 2025 年只有 7 篇，而且多為小型、短期研究 [[42930005]]。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="ai" class="verdict" aria-labelledby="ai-title">
+    <h2 id="ai-title">AI 滴定目前的證據到哪裡</h2>
+    <p class="oneline">AI 滴定目前做到了「可行、短期內不輸醫師、沒看到安全訊號」，但還沒證明比「好的固定規則＋好的支援」更好。</p>
+    <div class="grid">
+      <div>
+        <h3>已經有的</h3>
+        <ul>
+          <li>d-Nav：一篇 6 個月門診 RCT [[30808512]]，以及 600 人真實世界資料 [[38452101]]</li>
+          <li>iNCDSS：一篇住院 5 天的非劣性 RCT [[40332936]]</li>
+          <li>語音 AI：一篇 8 週的小型 RCT [[38039007]]</li>
+          <li>強化學習：一篇 16 人單臂試驗 [[37710000]]</li>
+        </ul>
+      </div>
+      <div>
+        <h3>還沒有的</h3>
+        <ul>
+          <li>除了演算法不公開的 d-Nav，沒有任何門診、≥6 個月、以 HbA1c 為主要終點的 ML／RL 基礎胰島素滴定 RCT</li>
+          <li>沒有正面比較「AI」與「好的固定規則加病人自調」的試驗</li>
+          <li>本次 PubMed 檢索沒找到 LLM 直接調劑量的臨床試驗，也沒找到貝氏方法做 T2D 基礎胰島素滴定的人體試驗（不代表完全不存在）</li>
+        </ul>
+      </div>
+      <div>
+        <h3>方法學限制</h3>
+        <ul>
+          <li>前瞻性試驗樣本 8–181 人，追蹤 5 天到 6 個月</li>
+          <li>多在住院或單一學術中心，外推到台灣門診有限</li>
+          <li>大多開放標籤，廠商人員常為作者</li>
+        </ul>
+      </div>
+      <div>
+        <h3>終點與安全性</h3>
+        <ul>
+          <li>終點多為替代指標：TIR、達最佳劑量時間、劑量誤差</li>
+          <li>樣本量不足以評估嚴重低血糖</li>
+          <li>部分系統的演算法不公開</li>
+        </ul>
+      </div>
+    </div>
+    <p class="fair">比 AI 更早就有證據的，是「讓病人每週自調 ≥2 次，並提供醫療人員支援」[[40273351]]。AI 要被廣泛採用，至少得在這個標準上證明有額外好處，例如更快、更少低血糖，或更省人力。</p>
+  </section>
+
+  <section id="qa" aria-labelledby="qa-title">
+    <h2 id="qa-title">台下最可能問的 5 個問題</h2>
+    <div class="qa">
+      <article class="q">
+        <h3><span class="qn">Q1</span>讓病人自己調胰島素安全嗎？低血糖會不會比較多？</h3>
+        <p>嚴重低血糖沒有增加：4,961 人的 AT.LANTUS 中，自調組 1.1%、醫師組 0.9%，HbA1c 還多降 0.14% [[15920040]]；亞洲 ATLAS 的嚴重低血糖兩組都是 0.7% [[25297660]]。但輕度或夜間低血糖可能稍多，PREDICTIVE 303 是 6.44 vs 4.95 次/人/年 [[17924873]]。所以重點是先教會病人「怎麼減量」，並有人可以問；網絡統合分析也顯示，有醫療人員支援的自調效果最好 [[40273351]]。</p>
+      </article>
+      <article class="q">
+        <h3><span class="qn">Q2</span>空腹目標到底要設 80–100、80–130，還是更低？</h3>
+        <p>TITRATE 把目標從 80–110 降到 70–90 mg/dL，HbA1c 多降 0.27%，整體低血糖沒有明顯增加 [[19515182]]。不過 icodec 試驗中目標 70–108 的組 level 2 低血糖最多 [[33875484]]；BEGIN Once Long 以 &lt;5 mmol/L 為目標，一年後也只有 38% 真正達標 [[23043166]]。反過來，BIF 試驗把目標放寬到 ≤120–140 mg/dL，HbA1c 仍達非劣性，低血糖少約 25% [[36758572]]。因此，試驗常用的 80–100 mg/dL [[25641260]] 可以當作起點；低血糖風險高的人再個別放寬，這一步屬臨床判斷，本表沒有收錄相關指引。</p>
+      </article>
+      <article class="q">
+        <h3><span class="qn">Q3</span>glargine U300、degludec、U100，哪一個比較好調？</h3>
+        <p>三者的 HbA1c 效果相當，差別在低血糖與劑量。U300 對 U100 的 HbA1c 差 0.04%，前 8 週低血糖事件率 RR 0.61，但劑量多約 17% [[25641260]]。U300 對 degludec 的 HbA1c 差 −0.05%，只有前 12 週滴定期 U300 的低血糖較少 [[30104294]]。在高低血糖風險族群，degludec U200 與 U300 的主要低血糖終點沒有差異，夜間與嚴重低血糖較少只是探索性結果 [[31984443]]。</p>
+      </article>
+      <article class="q">
+        <h3><span class="qn">Q4</span>App 或 CGM 這些數位工具真的有用嗎？台灣有資料嗎？</h3>
+        <p>台灣有：2026 年發表的多中心 RCT，用醫師設定規則、Health2Sync App 執行，24 週 HbA1c −0.87% vs −0.43% [[42067440]]；德國 My Dose Coach 對紙本滴定表也多降 0.31% [[37954005]]。CGM 方面，只打基礎胰島素的病人改用即時 CGM，8 個月多降 0.4% [[34077499]]，搭配自調 16 週多降 0.6% [[42035781]]。這些試驗多為開放標籤、追蹤半年以內，對照組又多是一般照護，因此很難分清楚效果來自工具本身，還是來自追蹤頻率增加。</p>
+      </article>
+      <article class="q">
+        <h3><span class="qn">Q5</span>AI 可以取代醫師調胰島素嗎？</h3>
+        <p>現在還不行，目前的證據只到「短期不輸醫師」。最完整的 RCT 是住院 5 天、149 人，TIR 76.4% vs 73.6%，達到非劣性 [[40332936]]；門診只有 d-Nav 一篇 6 個月 RCT，HbA1c 多降 0.7% [[30808512]]。系統性回顧指出，AI 胰島素管理的 RCT 只有 7 篇，而且多為小型短期研究 [[42930005]]。比較實際的定位是：讓 AI 協助醫療團隊更頻繁地依規則調整，而不是取代臨床判斷。</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="refs" aria-labelledby="refs-title">
+    <h2 id="refs-title">引用文獻</h2>
+    <div class="refs-wrap">
+      <table>
+        <thead><tr><th>類別</th><th>第一作者　年份</th><th>期刊</th><th>PMID</th><th>DOI</th></tr></thead>
+        <tbody>
+{{REF_ROWS}}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>資料來源：PubMed（NCBI）。每篇的 PMID、標題、期刊、年份與 DOI 均以 PubMed 紀錄核對；年份為 PubMed 首次出版日期（含電子優先出版）。</p>
+    <p>數值多由 AI 自 PubMed 摘要萃取（EDITION 3 與 BEGIN Once Long 另讀 PMC 全文），引用前請回原文核對。完整欄位見證據表 Excel；方法與假設見 NOTES.md。教學用，非臨床決策工具。</p>
+  </footer>
+</div>
