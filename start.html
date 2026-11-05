@@ -340,6 +340,31 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .tool-go svg { width: 1.3rem; height: 1.3rem; flex: none; transition: transform 0.15s ease; }
 .tool:hover .tool-go svg { transform: translateX(3px); }
 
+/* 第三張卡：臨床 AI 提示詞庫。青綠色與 prompts.html 一致；寬螢幕橫跨兩欄，不讓它單獨落在一格 */
+.tool--prompts {
+  --tool: #0f7a70;
+  --tool-text: #0b675e;
+  --tool-wash: #dcf1ed;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tool--prompts {
+    --tool: #3fbcac;
+    --tool-text: #6fd8c9;
+    --tool-wash: rgba(52, 184, 166, 0.18);
+  }
+}
+:root[data-theme="dark"] .tool--prompts {
+  --tool: #3fbcac;
+  --tool-text: #6fd8c9;
+  --tool-wash: rgba(52, 184, 166, 0.18);
+}
+@media (min-width: 46rem) {
+  .tool--prompts { grid-column: 1 / -1; }
+}
+.spark .p-line { fill: var(--line); }
+.spark .p-slot { fill: var(--tool-wash); stroke: var(--tool); stroke-width: 1.6; }
+.spark .p-copy { fill: var(--surface); stroke: var(--tool); stroke-width: 2.4; stroke-linejoin: round; }
+
 /* ---------- handout ---------- */
 .handout {
   display: grid;
@@ -555,6 +580,28 @@ button { font: inherit; color: inherit; cursor: pointer; }
           <span>全部為模擬資料</span>
         </p>
         <span class="tool-go" aria-hidden="true">開啟模擬器<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+      </article>
+
+      <article class="tool tool--prompts">
+        <div class="tool-head">
+          <span class="tool-kind">提示詞</span>
+          <svg class="spark" viewBox="0 0 120 48" aria-hidden="true">
+            <rect class="p-line" x="2" y="5" width="68" height="5" rx="2.5"/>
+            <rect class="p-line" x="2" y="20" width="24" height="5" rx="2.5"/>
+            <rect class="p-slot" x="30" y="15.5" width="42" height="14" rx="3.5"/>
+            <rect class="p-line" x="2" y="36" width="54" height="5" rx="2.5"/>
+            <rect class="p-copy" x="88" y="6" width="18" height="22" rx="3"/>
+            <rect class="p-copy" x="96" y="16" width="18" height="22" rx="3"/>
+          </svg>
+        </div>
+        <h3 class="tool-name"><a href="prompts.html">臨床 AI 提示詞庫</a></h3>
+        <p class="tool-desc">醫師、衛教師、營養師、藥師各 7 個糖尿病照護提示詞。把【方括號】換成你的情境，一鍵複製，貼到你平常用的 AI 就能用。</p>
+        <p class="tool-meta">
+          <span><span class="mono">28</span> 個提示詞</span>
+          <span>一鍵複製</span>
+          <span>附安全使用三原則</span>
+        </p>
+        <span class="tool-go" aria-hidden="true">開啟提示詞庫<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
       </article>
 
     </div>

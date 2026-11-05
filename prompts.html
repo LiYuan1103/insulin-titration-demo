@@ -1,0 +1,1743 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>臨床 AI 提示詞庫</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="郭力源醫師「控糖之巔」演講的延伸資源：醫師、衛教師、營養師、藥師各 7 個糖尿病照護 AI 提示詞，一鍵複製，任何主流 AI 都能用。提示詞僅供參考，AI 產出須經專業人員核對。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="臨床 AI 提示詞庫｜控糖之巔">
+<meta property="og:description" content="醫師、衛教師、營養師、藥師各 7 個糖尿病照護提示詞。把【方括號】換成你的情境，一鍵複製就能用。">
+<meta property="og:url" content="https://liyuan1103.github.io/insulin-titration-demo/prompts.html">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#eef2f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a1014" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f7a70'/%3E%3Cpath d='M12 7H8v18h4M20 7h4v18h-4' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+TC:wght@400;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&text=%E8%87%A8%E5%BA%8AAI%E6%8F%90%E7%A4%BA%E8%A9%9E%E5%BA%AB&display=swap">
+<style>
+/* 版面：手機優先單欄，沿用 start.html 的色票、字型與底部免責橫幅。
+   標題 → 安全使用三原則（深色面板，和底部橫幅同一套警示語彙）→ 使用步驟
+   → 角色分頁（捲動時黏在頂端）→ 提示詞卡片（寬螢幕左欄說明、右欄提示詞）
+   → 講者的 AI 工作流程（青綠＝AI 協助、深色外框＝人工把關）→ 分享。
+   本頁主色＝青綠；可替換的【方括號】＝琥珀色螢光筆。 */
+:root {
+  --bg: #eef2f5;
+  --surface: #ffffff;
+  --box: #f4f7f9;
+  --ink: #0a1620;
+  --ink-2: #2f3f4b;
+  --muted: #52616c;
+  --line: #c9d3da;
+  --accent: #1c5cab;
+  --pm: #0f7a70;
+  --pm-text: #0b675e;
+  --pm-wash: #dcf1ed;
+  --on-pm: #ffffff;
+  --slot-bg: #ffeeb8;
+  --slot-ink: #4d3300;
+  --slot-edge: #d99a00;
+  --panel-bg: #0a1620;
+  --panel-fg: #ffffff;
+  --panel-fg-2: #cfd9e0;
+  --panel-line: #2a3a46;
+  --banner-bg: #0a1620;
+  --banner-fg: #ffffff;
+  --banner-mark: #fab219;
+  --focus: #1849c6;
+  --font-display: "Noto Serif TC", "Noto Serif CJK TC", "Songti TC", "PMingLiU", serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", "Noto Sans CJK TC", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 16px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a1014;
+    --surface: #131c23;
+    --box: #0d151b;
+    --ink: #eef3f6;
+    --ink-2: #c7d1d8;
+    --muted: #9eabb5;
+    --line: #2e3b46;
+    --accent: #7cb2f0;
+    --pm: #3fbcac;
+    --pm-text: #6fd8c9;
+    --pm-wash: rgba(52, 184, 166, 0.18);
+    --on-pm: #04201c;
+    --slot-bg: rgba(250, 178, 25, 0.22);
+    --slot-ink: #ffd88a;
+    --slot-edge: rgba(250, 178, 25, 0.6);
+    --panel-bg: #18232b;
+    --panel-fg: #ffffff;
+    --panel-fg-2: #c7d1d8;
+    --panel-line: #2e3b46;
+    --banner-bg: #1b262e;
+    --banner-fg: #ffffff;
+    --banner-mark: #fab219;
+    --focus: #8ab4ff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a1014;
+  --surface: #131c23;
+  --box: #0d151b;
+  --ink: #eef3f6;
+  --ink-2: #c7d1d8;
+  --muted: #9eabb5;
+  --line: #2e3b46;
+  --accent: #7cb2f0;
+  --pm: #3fbcac;
+  --pm-text: #6fd8c9;
+  --pm-wash: rgba(52, 184, 166, 0.18);
+  --on-pm: #04201c;
+  --slot-bg: rgba(250, 178, 25, 0.22);
+  --slot-ink: #ffd88a;
+  --slot-edge: rgba(250, 178, 25, 0.6);
+  --panel-bg: #18232b;
+  --panel-fg: #ffffff;
+  --panel-fg-2: #c7d1d8;
+  --panel-line: #2e3b46;
+  --banner-bg: #1b262e;
+  --banner-fg: #ffffff;
+  --banner-mark: #fab219;
+  --focus: #8ab4ff;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html {
+  font-size: 112.5%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+@media (min-width: 1200px) { html { font-size: 125%; } }
+:root {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 16;
+  background: var(--bg);
+}
+[hidden] { display: none !important; }
+h1, h2, h3 { text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.mono { font-family: var(--font-mono); font-weight: 600; }
+
+.page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 1.25rem 9rem;
+  display: grid;
+  gap: 2.75rem;
+}
+
+/* ---------- masthead ---------- */
+.masthead { display: grid; gap: 0.9rem; min-width: 0; }
+.back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.back svg { width: 1.15rem; height: 1.15rem; flex: none; }
+.back:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.2em; }
+.eyebrow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+.eyebrow li {
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  padding: 0.1rem 0.7rem;
+  background: var(--surface);
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.5rem, 11.5vw, 3.9rem);
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+}
+.title .ai { letter-spacing: 0.02em; padding: 0 0.08em; }
+.lede {
+  max-width: 40rem;
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.speaker { font-size: 1.05rem; font-weight: 700; }
+.speaker-label {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin-right: 0.6em;
+  letter-spacing: 0.08em;
+}
+
+/* 可替換處：琥珀色螢光筆 */
+.slot {
+  background: var(--slot-bg);
+  color: var(--slot-ink);
+  border-radius: 4px;
+  box-shadow: inset 0 -2px 0 var(--slot-edge);
+  padding: 0 0.12em;
+  font-weight: 700;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ---------- sections ---------- */
+.sec { display: grid; gap: 1rem; min-width: 0; }
+.sec-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+.sec-lede { color: var(--ink-2); max-width: 44rem; }
+
+/* ---------- 安全使用三原則 ---------- */
+.rules {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.4rem 1.25rem 1.5rem;
+  background: var(--panel-bg);
+  color: var(--panel-fg);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  border-top: 5px solid var(--banner-mark);
+}
+.rules-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+.rules-title svg { width: 1.6rem; height: 1.6rem; flex: none; }
+.rules-title .tri { fill: var(--banner-mark); }
+.rules-title .bang { fill: var(--panel-bg); }
+.rule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.1rem;
+}
+@media (min-width: 52rem) {
+  .rule-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+}
+.rule {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  column-gap: 0.85rem;
+  row-gap: 0.3rem;
+  align-content: start;
+}
+@media (min-width: 52rem) {
+  .rule { grid-template-columns: minmax(0, 1fr); }
+}
+.rule-icon {
+  grid-row: span 3;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  border: 2px solid var(--banner-mark);
+  color: var(--banner-mark);
+}
+@media (min-width: 52rem) { .rule-icon { grid-row: auto; } }
+.rule-icon svg { width: 1.5rem; height: 1.5rem; }
+.rule h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1.4;
+}
+.rule-core { font-size: 1.05rem; font-weight: 700; line-height: 1.6; }
+.rule-detail { font-size: 0.95rem; line-height: 1.65; color: var(--panel-fg-2); }
+.rules-foot {
+  padding-top: 1rem;
+  border-top: 1px solid var(--panel-line);
+  font-size: 0.95rem;
+  color: var(--panel-fg-2);
+}
+
+/* ---------- 使用步驟 ---------- */
+.howto {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+  counter-reset: how;
+}
+@media (min-width: 46rem) {
+  .howto { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.howto li {
+  counter-increment: how;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: start;
+  padding: 0.75rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.howto li::before {
+  content: counter(how);
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--pm-wash);
+  color: var(--pm-text);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+.howto b { font-weight: 900; }
+
+/* ---------- 角色分頁 ---------- */
+.library { display: grid; gap: 1.25rem; min-width: 0; }
+.tabs-wrap {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 15;
+  padding-block: 0.6rem;
+  background: var(--bg);
+  box-shadow: 0 0 0 100vmax var(--bg);
+  clip-path: inset(0 -100vmax);
+  border-bottom: 1px solid var(--line);
+}
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+  max-width: 44rem;
+}
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 3.2rem;
+  padding: 0 0.4rem;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 900;
+  font-size: 1.05rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.tab:hover { border-color: var(--pm); }
+.tab-count {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.tab[aria-selected="true"] {
+  background: var(--pm);
+  border-color: var(--pm);
+  color: var(--on-pm);
+}
+.tab[aria-selected="true"] .tab-count { color: var(--on-pm); }
+
+.panel { display: grid; gap: 1.25rem; min-width: 0; }
+.panel:focus-visible { outline-offset: 6px; }
+.panel-head { display: grid; gap: 0.35rem; }
+.panel-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+.panel-title .count { color: var(--pm-text); }
+.panel-lede { color: var(--ink-2); }
+.toc {
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem 0;
+  display: grid;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+@media (min-width: 46rem) {
+  .toc { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.5rem; }
+}
+.toc a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.6rem;
+  padding: 0.2rem 0;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+.toc a::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-right: 2.5px solid var(--pm);
+  border-bottom: 2.5px solid var(--pm);
+  transform: rotate(45deg) translate(-2px, -2px);
+}
+.toc a:hover { color: var(--pm-text); text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* ---------- 提示詞卡片 ---------- */
+.cards { display: grid; gap: 1.25rem; }
+.pcard {
+  scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 5.5rem);
+  display: grid;
+  grid-template-areas: "title" "use" "box" "copy" "tip";
+  gap: 0.9rem;
+  min-width: 0;
+  padding: 1.25rem 1.1rem 1.25rem;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+}
+@media (min-width: 56rem) {
+  .pcard {
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: "title box" "use box" "copy box" "tip box";
+    column-gap: 1.75rem;
+    padding: 1.5rem;
+  }
+}
+.pcard:target { border-color: var(--pm); }
+.pcard-title {
+  grid-area: title;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.4;
+}
+.lbl {
+  display: block;
+  margin-bottom: 0.1rem;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.pcard-use { grid-area: use; font-size: 1.05rem; line-height: 1.65; }
+.pbox {
+  grid-area: box;
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  background: var(--box);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+}
+.pbox-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.2rem 1rem;
+  padding: 0.6rem 1rem 0;
+}
+.pbox-head .lbl { margin: 0; }
+.pbox-hint { font-size: 0.85rem; color: var(--muted); }
+.prompt-text {
+  margin: 0;
+  padding: 0.6rem 1rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.97rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  tab-size: 2;
+}
+.copy {
+  grid-area: copy;
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 3.3rem;
+  padding: 0 1.2rem;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 1.1rem;
+  font-weight: 900;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.copy svg { width: 1.3rem; height: 1.3rem; flex: none; }
+.copy:hover { background: var(--ink-2); border-color: var(--ink-2); }
+.copy.is-copied,
+.copy.is-copied:hover { background: var(--pm); border-color: var(--pm); color: var(--on-pm); }
+.copy.is-manual,
+.copy.is-manual:hover { background: var(--surface); border-color: var(--slot-edge); color: var(--ink); }
+.copy .i-done { display: none; }
+.copy.is-copied .i-copy { display: none; }
+.copy.is-copied .i-done { display: block; }
+.pcard-tip {
+  grid-area: tip;
+  font-size: 0.97rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+/* ---------- 講者的 AI 工作流程 ---------- */
+.flow-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.flow-key span { display: inline-flex; align-items: center; gap: 0.45rem; }
+.flow-key span::before {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  flex: none;
+}
+.flow-key .k-ai::before { background: var(--pm-wash); border: 2px solid var(--pm); }
+.flow-key .k-human::before { background: var(--surface); border: 2.5px solid var(--ink); }
+.flow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+.step {
+  --node: 3.4rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--node) minmax(0, 1fr);
+  column-gap: 1rem;
+  padding-bottom: 1.4rem;
+}
+.step:last-child { padding-bottom: 0; }
+.step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--node) / 2 - 1.5px);
+  top: var(--node);
+  bottom: 0;
+  width: 3px;
+  background: var(--line);
+}
+.node {
+  width: var(--node);
+  height: var(--node);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--pm-wash);
+  border: 2px solid var(--pm);
+  color: var(--pm-text);
+}
+.step--human .node {
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  color: var(--ink);
+}
+.node svg { width: 1.6rem; height: 1.6rem; }
+.step-body { display: grid; gap: 0.25rem; align-content: start; padding-top: 0.2rem; min-width: 0; }
+.step-who {
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: var(--pm-text);
+}
+.step--human .step-who { color: var(--ink); }
+.step-who .mono { font-weight: 600; }
+.step-title { margin: 0; font-size: 1.15rem; font-weight: 900; line-height: 1.4; }
+.step-desc { font-size: 0.97rem; line-height: 1.65; color: var(--ink-2); }
+@media (min-width: 60rem) {
+  .flow { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 1rem; }
+  .step { grid-template-columns: minmax(0, 1fr); align-content: start; row-gap: 0.75rem; padding-bottom: 0; }
+  .step:not(:last-child)::before {
+    left: var(--node);
+    right: -1rem;
+    top: calc(var(--node) / 2 - 1.5px);
+    bottom: auto;
+    width: auto;
+    height: 3px;
+  }
+}
+.flow-sum {
+  padding: 1rem 1.1rem;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+/* ---------- share ---------- */
+.share {
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.share-label { margin: 0; font-size: 0.9rem; color: var(--muted); font-weight: 700; }
+.share-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+}
+.share-url {
+  min-width: 0;
+  flex: 1 1 16rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+  user-select: all;
+  -webkit-user-select: all;
+  color: var(--ink);
+}
+.pill-btn {
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.pill-btn:hover { border-color: var(--ink-2); }
+.copy-status { font-size: 0.9rem; color: var(--ink-2); min-height: 1.4em; }
+.privacy { font-size: 0.9rem; color: var(--muted); }
+.back-foot { font-weight: 700; }
+
+/* ---------- fixed disclaimer ---------- */
+.disclaimer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding-top: 0.75rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--banner-bg);
+  color: var(--banner-fg);
+  border-top: 4px solid var(--banner-mark);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.45;
+  text-align: center;
+}
+.disclaimer svg { width: 1.4rem; height: 1.4rem; flex: none; }
+.disclaimer .tri { fill: var(--banner-mark); }
+.disclaimer .bang { fill: var(--banner-bg); }
+.disclaimer span { text-wrap: balance; }
+
+@media (prefers-reduced-motion: reduce) {
+  .copy { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <a class="back" href="start.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg>控糖之巔 工具入口</a>
+    <ul class="eyebrow" aria-label="這個頁面">
+      <li>回去就能用</li>
+      <li>不限特定 AI</li>
+      <li>不蒐集任何資料</li>
+    </ul>
+    <h1 class="title">臨床<span class="ai">AI</span>提示詞庫</h1>
+    <p class="lede">依你的角色挑一個提示詞，把<mark class="slot">【方括號】</mark>換成你的情境，複製貼到你平常用的 AI 對話就能用。AI 是助手，不取代臨床判斷；先從一個小步驟開始。</p>
+    <p class="speaker"><span class="speaker-label">講者</span>郭力源 醫師</p>
+  </header>
+
+  <section class="rules" aria-labelledby="h-rules">
+    <h2 class="rules-title" id="h-rules"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="tri" d="M12 2.2 23 21.3H1z"/><rect class="bang" x="10.9" y="8.4" width="2.2" height="7" rx="1"/><rect class="bang" x="10.9" y="16.7" width="2.2" height="2.2" rx="1"/></svg>安全使用三原則</h2>
+    <ul class="rule-list">
+      <li class="rule">
+        <span class="rule-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="2"/><path d="M5.6 15.5c.6-1.3 1.7-2 2.9-2s2.3.7 2.9 2M14.5 10h4M14.5 13.5h3"/><path d="M3 21 21 3"/></svg></span>
+        <h3>去識別化</h3>
+        <p class="rule-core">不輸入姓名、病歷號、身分證字號、生日等可識別資訊。</p>
+        <p class="rule-detail">寫「70 多歲男性、糖尿病 15 年」就夠了。電話、地址、照片、罕見職業或特殊事件，組合起來也可能認出是誰。</p>
+      </li>
+      <li class="rule">
+        <span class="rule-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7"/><path d="m15.8 15.8 5.2 5.2"/><path d="m7.4 10.6 2.2 2.2 3.9-4.1"/></svg></span>
+        <h3>一定要核對</h3>
+        <p class="rule-core">AI 會出錯，醫療內容與數字要自己確認。</p>
+        <p class="rule-detail">劑量、單位、檢驗數值和文獻出處最容易錯；AI 列出的文獻可能根本不存在。每個提示詞都會請 AI 把不確定的地方標成「（待查證）」。</p>
+      </li>
+      <li class="rule">
+        <span class="rule-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21H11"/><path d="M13 3l5 5v3"/><path d="M8.5 9.5h4M8.5 13h5"/><path d="M14.5 21v-2.3l5.1-5.1a1.6 1.6 0 0 1 2.3 2.3L16.8 21z"/></svg></span>
+        <h3>不取代臨床判斷</h3>
+        <p class="rule-core">AI 的輸出是草稿，不是醫囑。</p>
+        <p class="rule-detail">適不適合這位病人、要不要用，由你決定；給病人的內容，要由專業人員看過才發出去。</p>
+      </li>
+    </ul>
+    <p class="rules-foot">也請遵守你服務的醫院或機構對使用生成式 AI 的規定。</p>
+  </section>
+
+  <section class="sec" aria-labelledby="h-howto">
+    <h2 class="sec-title" id="h-howto">四個步驟開始用</h2>
+    <ol class="howto">
+      <li><span><b>選角色</b>，挑一個你下週就用得到的提示詞。</span></li>
+      <li><span>按<b>「複製提示詞」</b>，貼到你平常用的 AI 對話框。</span></li>
+      <li><span>把<mark class="slot">【方括號】</mark>換成你的內容，記得<b>去識別化</b>。</span></li>
+      <li><span>AI 回答後<b>逐項核對</b>，修改成你的版本再使用。</span></li>
+    </ol>
+  </section>
+
+  <section class="library" id="library" aria-label="依角色分類的提示詞">
+    <div id="tabs-top"></div>
+    <div class="tabs-wrap">
+      <nav class="tabs" aria-label="選擇角色">
+        <a class="tab" href="#doctor">醫師<span class="tab-count"><span class="vh">，</span>7<span class="vh"> 個</span></span></a>
+        <a class="tab" href="#educator">衛教師<span class="tab-count"><span class="vh">，</span>7<span class="vh"> 個</span></span></a>
+        <a class="tab" href="#dietitian">營養師<span class="tab-count"><span class="vh">，</span>7<span class="vh"> 個</span></span></a>
+        <a class="tab" href="#pharmacist">藥師<span class="tab-count"><span class="vh">，</span>7<span class="vh"> 個</span></span></a>
+      </nav>
+    </div>
+    <div class="panel" id="doctor">
+      <div class="panel-head">
+        <h2 class="panel-title">醫師的 <span class="count mono">7</span> 個提示詞</h2>
+        <p class="panel-lede">門診說明、讀文獻、和病人討論治療選擇。</p>
+      </div>
+      <ul class="toc" aria-label="醫師的提示詞清單">
+        <li><a href="#doctor-1">指引重點變成門診三句話</a></li>
+        <li><a href="#doctor-2">5 分鐘快速評讀 RCT</a></li>
+        <li><a href="#doctor-3">病情說明改寫成白話版</a></li>
+        <li><a href="#doctor-4">困難對話：開始打胰島素</a></li>
+        <li><a href="#doctor-5">轉診／照會單草稿</a></li>
+        <li><a href="#doctor-6">共享決策：治療選項比較表</a></li>
+        <li><a href="#doctor-7">個案變成臨床推理教學題</a></li>
+      </ul>
+      <div class="cards">
+        <article class="pcard" id="doctor-1" aria-labelledby="doctor-1-title">
+          <h3 class="pcard-title" id="doctor-1-title">指引重點變成門診三句話</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>把一段指引或共識的重點，濃縮成門診可以直接說出口的三句話。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="doctor-1-text">你是一位熟悉糖尿病照護的內分泌專科醫師，正在準備門診使用的重點摘要。
+
+以下是我貼上的指引段落（來源：【指引名稱、年份與章節，例如 ○○學會 2026 糖尿病照護指引第 9 章】）：
+【貼上指引原文段落】
+
+請幫我：
+1. 把重點濃縮成「門診三句話」，說給【對象：病人／住院醫師／基層醫師】聽，每句 30 字以內。
+2. 每一句後面用括號註明它對應原文的哪一段或哪一句。
+3. 列出 2 個這段指引沒有回答、但門診常被問到的問題，各 30 字以內。
+
+規則：
+- 只根據我貼上的原文，不要加入原文沒有的建議或數字。
+- 不確定、或可能因版本與地區而不同的地方，請在句尾加註「（待查證）」。
+- 使用繁體中文與台灣常用的醫療用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="doctor-1-text" data-title="指引重點變成門診三句話"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：指引重點變成門診三句話</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>先貼原文再請 AI 整理，比直接問「指引怎麼說」可靠得多；AI 憑記憶回答的指引內容常常是舊版。</p>
+        </article>
+        <article class="pcard" id="doctor-2" aria-labelledby="doctor-2-title">
+          <h3 class="pcard-title" id="doctor-2-title">5 分鐘快速評讀 RCT</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>門診空檔讀懂一篇隨機對照試驗的設計、主要結果與限制。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="doctor-2-text">你是一位熟悉實證醫學的臨床流行病學家，要幫我（臨床醫師）快速評讀下面這篇隨機對照試驗：
+【貼上摘要，或方法與結果段落】
+
+請依下列格式輸出，總長 400 字以內：
+1. PICO：族群、介入、對照、主要結果指標，各一行。
+2. 主要結果：效果大小與 95% 信賴區間；有絕對風險差時，換算 NNT 或 NNH。
+3. 偏差風險：隨機分配、盲性、追蹤流失、意向治療分析，各給「低／有疑慮／高」，並用一句話說明理由。
+4. 外推性：結果能不能用在【我的病人族群，例如 台灣門診 65 歲以上、eGFR 30–60 的第二型糖尿病病人】。
+5. 一句話結論：這篇會不會改變我的臨床做法。
+
+規則：
+- 原文沒有提供的數據請寫「原文未提供」，不要推算或補上。
+- 你算出來的數字（例如 NNT）請列出算式，方便我核對。
+- 不確定的判斷請加註「（待查證）」。
+- 使用繁體中文，專有名詞第一次出現時附英文。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="doctor-2-text" data-title="5 分鐘快速評讀 RCT"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：5 分鐘快速評讀 RCT</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>只貼摘要時，偏差風險多半只能寫「原文未提供」；要正式評讀，請貼方法與結果段落，並回到原文核對每個數字。</p>
+        </article>
+        <article class="pcard" id="doctor-3" aria-labelledby="doctor-3-title">
+          <h3 class="pcard-title" id="doctor-3-title">病情說明改寫成白話版</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>把醫學用語寫成的病情摘要，改寫成病人和家屬聽得懂、帶得回家的說明。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="doctor-3-text">你是一位很會跟病人溝通的家庭醫師。請把下面這段病情說明，改寫給【對象，例如 70 多歲、只聽得懂簡單國語的病人和他的女兒】看。
+
+去識別化的病情說明：
+【貼上病情摘要，例如 第二型糖尿病 15 年，HbA1c 9.2%，eGFR 45，合併視網膜病變，目前吃三種口服藥】
+
+要求：
+- 小學五年級看得懂的程度，總長 250 字以內。
+- 依序說明「現在身體怎麼了」「為什麼要處理」「接下來要做的三件事」。
+- 數字只保留最重要的 1–2 個，並用日常比喻說明（例如 HbA1c 像是最近三個月的平均成績）。
+- 不要嚇病人，也不要保證療效。
+- 原文沒寫的治療細節不要自己補；需要醫師再確認的地方請加註「（待查證）」。
+- 使用繁體中文、台灣口語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="doctor-3-text" data-title="病情說明改寫成白話版"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：病情說明改寫成白話版</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>給病人前先自己唸一遍：比喻要貼近病人的生活，數字要和病歷一致。</p>
+        </article>
+        <article class="pcard" id="doctor-4" aria-labelledby="doctor-4-title">
+          <h3 class="pcard-title" id="doctor-4-title">困難對話：開始打胰島素</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>病人抗拒開始使用胰島素時，事先演練怎麼開口、怎麼回應常見的擔心。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="doctor-4-text">你是一位資深的糖尿病照護醫師，擅長動機式晤談。我下次門診要和病人討論開始使用基礎胰島素。
+
+去識別化背景：【例如 58 歲男性、計程車司機、吃三種口服藥 HbA1c 仍 9.5%、怕打針、擔心「打了就停不掉」】
+
+請幫我準備：
+1. 開場白：2–3 句，先肯定病人過去的努力。
+2. 病人最可能說出的 5 種擔心（例如 怕痛、怕低血糖、開車會不會出事、覺得病情變嚴重、打了就停不掉），每種給我一段 50 字以內、同理而不說教的回應。
+3. 三個開放式問題，用來了解他真正在意的事。
+4. 如果他今天還是不願意，可以一起約定的「下一小步」，30 字以內。
+
+規則：
+- 用台灣門診的自然口語，不要翻譯腔。
+- 不要編造統計數字；需要引用數據時，請寫「（此處補上可靠數據）」，讓我自己查。
+- 不確定是否正確的醫療說法，請加註「（待查證）」。
+- 使用繁體中文。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="doctor-4-text" data-title="困難對話：開始打胰島素"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：困難對話：開始打胰島素</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>AI 寫的是劇本草稿，真正的對話要跟著病人的反應走；挑一兩句順口的就好。</p>
+        </article>
+        <article class="pcard" id="doctor-5" aria-labelledby="doctor-5-title">
+          <h3 class="pcard-title" id="doctor-5-title">轉診／照會單草稿</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>把病情重點整理成結構清楚、對方一看就知道要回答什麼的轉診單。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="doctor-5-text">你是一位內科醫師，正在寫轉診（照會）單給【接收科別，例如 腎臟科】的醫師。
+
+去識別化病情摘要：
+【年齡層、性別、糖尿病病程、主要共病、目前用藥與劑量、最近的檢驗值與日期】
+這次轉診的原因：【例如 eGFR 一年內從 62 降到 41，UACR 480 mg/g】
+想請對方回答的問題：【例如 是否需要進一步檢查腎病變原因？目前的 SGLT2 抑制劑是否繼續使用？】
+
+請寫成轉診單草稿：
+- 結構：轉診目的（一句話）→ 病史重點 → 目前用藥 → 相關檢驗（表格：項目／數值／日期）→ 想請教的問題（編號）。
+- 總長 250 字以內，專業用語可用英文縮寫。
+- 只使用我提供的資料，不要補上我沒給的數值；資料不足的地方請標「（待補）」。
+- 你不確定的醫學敘述請加註「（待查證）」。
+- 使用繁體中文。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="doctor-5-text" data-title="轉診／照會單草稿"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：轉診／照會單草稿</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>送出前逐項核對數值與日期；身分資料在院內系統補上，不要貼進 AI。</p>
+        </article>
+        <article class="pcard" id="doctor-6" aria-labelledby="doctor-6-title">
+          <h3 class="pcard-title" id="doctor-6-title">共享決策：治療選項比較表</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>做一張給病人看的選項比較表，幫病人想清楚自己最在意什麼。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="doctor-6-text">你是一位重視共享決策的糖尿病照護醫師。請幫我做一張給病人看的選項比較表，比較【選項 A，例如 每天一次基礎胰島素】和【選項 B，例如 每週一次 GLP-1 受體促效劑注射】。
+
+病人背景（去識別化）：【例如 62 歲女性、BMI 29、HbA1c 8.8%、在意體重、上班很忙】
+
+要求：
+- 表格欄位：比較項目／選項 A／選項 B。比較項目包括：怎麼用、多久用一次、對血糖的效果、對體重的影響、常見副作用、低血糖風險、需要自我監測什麼、費用與健保給付。
+- 每格 25 字以內，用病人聽得懂的話。
+- 表格後面加三個問題，幫病人想清楚「自己最在意什麼」。
+- 健保給付規定、價格與療效數字容易過時或記錯，一律加註「（待查證）」，由我核對後再給病人。
+- 不要替病人做決定。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="doctor-6-text" data-title="共享決策：治療選項比較表"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：共享決策：治療選項比較表</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>健保給付條件常常更新，請以健保署最新公告為準，核對後再印給病人。</p>
+        </article>
+        <article class="pcard" id="doctor-7" aria-labelledby="doctor-7-title">
+          <h3 class="pcard-title" id="doctor-7-title">個案變成臨床推理教學題</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>把一個去識別化個案，改寫成給住院醫師或醫學生的分段揭露教學題。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="doctor-7-text">你是一位醫學教育者。請把下面這個去識別化的糖尿病個案，改寫成給【對象：PGY／住院醫師／醫學生】的臨床推理教學題。
+
+個案摘要：【貼上去識別化的個案摘要】
+教學重點：【例如 基礎胰島素的起始與滴定、低血糖風險評估】
+
+請輸出：
+1. 個案情境：150 字以內，分兩階段揭露資訊（初診、三個月後回診）。
+2. 每一階段 2 題四選一選擇題，附正確答案與 50 字以內的解析。
+3. 1 題開放討論題。
+4. 學習目標 3 條，各 25 字以內。
+
+規則：
+- 解析中的建議要能對應到主要指引；不確定是否符合最新指引的地方請加註「（待查證）」。
+- 不要加入個案沒有的檢驗數據；為了讓題目成立而新增的數據，請標示「（虛構，教學用）」。
+- 使用繁體中文，醫學名詞可附英文。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="doctor-7-text" data-title="個案變成臨床推理教學題"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：個案變成臨床推理教學題</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>選擇題的答案與解析請自己對過指引；AI 偶爾會把錯的選項說成對的。</p>
+        </article>
+      </div>
+    </div>
+    <div class="panel" id="educator">
+      <div class="panel-head">
+        <h2 class="panel-title">衛教師的 <span class="count mono">7</span> 個提示詞</h2>
+        <p class="panel-lede">把衛教內容改寫成病人聽得懂、做得到的版本。</p>
+      </div>
+      <ul class="toc" aria-label="衛教師的提示詞清單">
+        <li><a href="#educator-1">胰島素注射衛教：長輩版</a></li>
+        <li><a href="#educator-2">衛教稿改成台語口語版</a></li>
+        <li><a href="#educator-3">低血糖處理單張</a></li>
+        <li><a href="#educator-4">CGM 報告白話解說</a></li>
+        <li><a href="#educator-5">衛教後的回覆示教問題</a></li>
+        <li><a href="#educator-6">常見迷思 Q&amp;A</a></li>
+        <li><a href="#educator-7">團體衛教課程教案</a></li>
+      </ul>
+      <div class="cards">
+        <article class="pcard" id="educator-1" aria-labelledby="educator-1-title">
+          <h3 class="pcard-title" id="educator-1-title">胰島素注射衛教：長輩版</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>把標準的胰島素筆針注射衛教，改寫成長輩看得懂、照著做得到的步驟。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="educator-1-text">你是一位有 15 年經驗的糖尿病衛教師。請把下面的胰島素筆針注射衛教內容，改寫給【對象，例如 80 歲、視力不好、獨居的長輩】看。
+
+原始衛教內容：
+【貼上你們單位現行的衛教單張文字】
+
+要求：
+- 只保留最重要的步驟，最多 8 步；每步一行、20 字以內，句子用動詞開頭（例如「轉到醫師說的格數」）。
+- 用長輩熟悉的說法；數字用阿拉伯數字。
+- 最後加上「打完要注意的 3 件事」，每件 20 字以內。
+- 只能改寫原始內容，不能新增原文沒有的醫療指示；如果你覺得原文漏了重要步驟，請另外列在最後「建議補充（請衛教師確認）」，並加註「（待查證）」。
+- 使用繁體中文、台灣口語，內容要能放大字體印在一張 A4。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="educator-1-text" data-title="胰島素注射衛教：長輩版"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：胰島素注射衛教：長輩版</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>劑量、針頭停留秒數等細節以你們單位的衛教單和藥品仿單為準；印出後請長輩照著做一次。</p>
+        </article>
+        <article class="pcard" id="educator-2" aria-labelledby="educator-2-title">
+          <h3 class="pcard-title" id="educator-2-title">衛教稿改成台語口語版</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>把衛教內容改成可以直接唸給長輩聽的台語口語稿。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="educator-2-text">你是一位台語很流利、常在門診幫長輩衛教的糖尿病衛教師。請把下面的衛教內容，改寫成可以直接唸給長輩聽的台語口語稿。
+
+衛教內容：【貼上要改寫的內容，例如 胰島素注射步驟或低血糖處理】
+對象：【例如 只聽得懂台語的 80 多歲阿嬤和她的看護】
+
+要求：
+- 用繁體國字寫台語，盡量採用教育部臺灣閩南語推薦用字；比較難的字，後面用括號附華語意思。
+- 句子短、口語，像在跟阿公阿嬤講話；全文約 300–400 字，1–2 分鐘可以唸完。
+- 數字、劑量、單位保留阿拉伯數字，不要改寫。
+- 最後附一份對照表：台語句子／華語原意（繁體中文、台灣用語），方便我逐句核對意思有沒有跑掉。
+- 不確定的台語用字請標「（用字待查證）」；不確定的醫療內容請加註「（待查證）」。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="educator-2-text" data-title="衛教稿改成台語口語版"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：衛教稿改成台語口語版</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>AI 寫的台語常有不道地的用字或語法，請先自己唸一遍，或請會說台語的同事幫忙聽。</p>
+        </article>
+        <article class="pcard" id="educator-3" aria-labelledby="educator-3-title">
+          <h3 class="pcard-title" id="educator-3-title">低血糖處理單張</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>做一張一眼看懂、可以貼在冰箱上的「低血糖怎麼辦」單張。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="educator-3-text">你是一位糖尿病衛教師，要做一張「低血糖怎麼辦」的衛教單張，對象是【對象，例如 剛開始使用基礎胰島素的病人與家屬】。
+
+請依照我們單位採用的處理原則撰寫：
+【貼上你們單位的低血糖處理流程，例如 血糖低於 70 mg/dL 時，先吃 15 公克快速吸收的糖，15 分鐘後再測一次】
+
+格式：
+1. 標題一行。
+2. 「可能是低血糖的感覺」：常見症狀 5–6 個，每個 6 字以內。
+3. 「馬上這樣做」：編號步驟，每步 20 字以內。
+4. 「15 公克的糖大約是」：列 4 種台灣家裡或超商買得到的例子，附份量（例如 方糖幾顆、果汁多少 cc）。
+5. 「這些情況要馬上就醫或打 119」：3 條。
+6. 全文 300 字以內，適合印在一張 A4。
+
+規則：
+- 處理數字以我貼上的原則為準，不要自行修改。
+- 食物份量的含糖量請加註「（請核對營養標示）」，因為各品牌不同。
+- 其他不確定的內容請加註「（待查證）」。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="educator-3-text" data-title="低血糖處理單張"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：低血糖處理單張</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>份量請用實際產品的營養標示核對。同時使用 acarbose 的病人要用葡萄糖處理低血糖，請依單位規範補充。</p>
+        </article>
+        <article class="pcard" id="educator-4" aria-labelledby="educator-4-title">
+          <h3 class="pcard-title" id="educator-4-title">CGM 報告白話解說</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>把連續血糖監測（CGM）報告的數字，翻成病人聽得懂的說明和一個具體的下一步。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="educator-4-text">你是一位熟悉連續血糖監測（CGM）的糖尿病衛教師。以下是一位病人 14 天 CGM 報告的摘要（已去識別化）：
+
+- 目標範圍內時間（TIR，70–180 mg/dL）：【例如 52%】
+- 高於 180 mg/dL 的時間：【例如 38%】（其中高於 250：【例如 12%】）
+- 低於 70 mg/dL 的時間：【例如 8%】（其中低於 54：【例如 2%】）
+- 平均血糖／GMI：【例如 172 mg/dL／7.6%】
+- 血糖變異係數（CV）：【例如 38%】
+- 我觀察到的模式：【例如 凌晨 3–5 點常偏低、晚餐後 2 小時常超過 250】
+
+請寫一段給病人的說明，對象是【對象，例如 60 多歲、第一次戴 CGM 的病人】：
+1. 分「好消息／要注意／下一步」三段，總長 250 字以內，口語、不責備。
+2. 把百分比換成生活化的說法（例如 一天 24 小時裡，大約幾個小時在安全範圍）。
+3. 只提出 1 個最優先、病人做得到的行動，並說明為什麼先做這一件。
+4. 每項數字和一般建議目標比較，目標值請註明出處（例如 國際共識）；不確定的請加註「（待查證）」。
+5. 若數據顯示有低血糖風險，最後提醒「請與醫師討論是否調整藥物」，不要自行建議改劑量。
+
+使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="educator-4-text" data-title="CGM 報告白話解說"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：CGM 報告白話解說</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>百分比換算成幾小時請自己再算一次；要不要調整藥物，一定回到醫師。</p>
+        </article>
+        <article class="pcard" id="educator-5" aria-labelledby="educator-5-title">
+          <h3 class="pcard-title" id="educator-5-title">衛教後的回覆示教問題</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>衛教結束前，用回覆示教（teach-back）確認病人真的懂、真的會做。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="educator-5-text">你是一位熟悉回覆示教（teach-back）的糖尿病衛教師。我剛完成【衛教主題，例如 基礎胰島素注射與低血糖處理】的衛教，對象是【對象，例如 第一次使用胰島素、由太太協助的 75 歲病人】。
+
+剛才衛教的重點：
+【貼上剛才衛教的重點】
+
+請幫我設計：
+1. 5 個回覆示教問題，用「請您說說看」「做給我看」的開放式問法，不要用「懂不懂」「有沒有問題」這類是非題；每題 30 字以內。
+2. 每題附「理想回答的關鍵重點」2–3 點，每點 15 字以內。
+3. 每題附「如果答不出來，換個方式再教一次」的提示，一句話。
+4. 最後列出 2 個需要請病人實際操作示範的動作。
+
+規則：
+- 問題要口語，長輩聽得懂。
+- 理想回答只能來自我貼上的衛教重點，原文沒教的不要列入；不確定的內容請加註「（待查證）」。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="educator-5-text" data-title="衛教後的回覆示教問題"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：衛教後的回覆示教問題</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>回覆示教是確認「我有沒有教清楚」，不是考病人；語氣要像聊天。</p>
+        </article>
+        <article class="pcard" id="educator-6" aria-labelledby="educator-6-title">
+          <h3 class="pcard-title" id="educator-6-title">常見迷思 Q&amp;A</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>針對病人常聽到的錯誤說法，準備溫和、有根據的回答。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="educator-6-text">你是一位糖尿病衛教師，要為【對象，例如 門診的第二型糖尿病病人與家屬】準備一份「常見迷思 Q&amp;A」，主題是【主題，例如 胰島素】。
+
+請列出台灣病人最常見的 6 個迷思（例如「打胰島素會洗腎」「打了就停不掉」），每個迷思：
+1. 先用一句話同理病人為什麼會這樣想。
+2. 再用 60 字以內說明正確觀念，口語、不說教。
+3. 最後附一句病人可以帶回家的重點，15 字以內。
+
+規則：
+- 正確觀念要有可靠依據；每題最後列出你依據的指引或衛教資料名稱，無法確定出處時，請寫「（出處待查證）」，不要編造文獻。
+- 不確定的說法請加註「（待查證）」。
+- 不要用恐嚇式的說法。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="educator-6-text" data-title="常見迷思 Q&amp;A"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：常見迷思 Q&amp;A</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>AI 列出的出處常常不存在或年份錯誤；找到原文後才引用。</p>
+        </article>
+        <article class="pcard" id="educator-7" aria-labelledby="educator-7-title">
+          <h3 class="pcard-title" id="educator-7-title">團體衛教課程教案</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>快速擬一份有互動、時間分配清楚的團體衛教教案。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="educator-7-text">你是一位糖尿病衛教師，要設計一堂【時間，例如 30 分鐘】的團體衛教課，主題是【主題，例如 外食族的血糖管理】，對象是【對象，例如 10 位 50–70 歲、多數只吃口服藥的第二型糖尿病病人】。
+
+請輸出（整份教案 600 字以內，不含表格）：
+1. 學習目標 3 條，用「課後學員能夠……」開頭。
+2. 時間分配表：時間／活動／帶領方式／需要的教具。
+3. 至少 1 個讓學員動手做的活動（例如 看便當照片估醣類份數）。
+4. 課後 3 題確認理解的問題。
+5. 教具清單。
+
+規則：
+- 內容以【你們單位採用的指引或衛教教材】為準；具體數字不確定時請加註「（待查證）」。
+- 互動多於講授，用語口語。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="educator-7-text" data-title="團體衛教課程教案"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：團體衛教課程教案</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>先挑一段試講給同事聽；實際花的時間通常比 AI 估的長。</p>
+        </article>
+      </div>
+    </div>
+    <div class="panel" id="dietitian">
+      <div class="panel-head">
+        <h2 class="panel-title">營養師的 <span class="count mono">7</span> 個提示詞</h2>
+        <p class="panel-lede">把飲食建議變成病人買得到、吃得到的具體選擇。</p>
+      </div>
+      <ul class="toc" aria-label="營養師的提示詞清單">
+        <li><a href="#dietitian-1">依飲食習慣設計一週菜單</a></li>
+        <li><a href="#dietitian-2">外食選擇建議</a></li>
+        <li><a href="#dietitian-3">醣類代換表白話說明</a></li>
+        <li><a href="#dietitian-4">節慶飲食衛教</a></li>
+        <li><a href="#dietitian-5">飲食紀錄對照血糖找線索</a></li>
+        <li><a href="#dietitian-6">家常菜改成控糖版</a></li>
+        <li><a href="#dietitian-7">糖尿病合併腎臟病的飲食重點</a></li>
+      </ul>
+      <div class="cards">
+        <article class="pcard" id="dietitian-1" aria-labelledby="dietitian-1-title">
+          <h3 class="pcard-title" id="dietitian-1-title">依飲食習慣設計一週菜單</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>保留病人原本的飲食習慣，排出一週三餐的菜單草稿。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="dietitian-1-text">你是一位台灣的臨床營養師，專長是糖尿病飲食。請依照下面這位病人的情況，設計一週菜單草稿，給病人和負責煮飯的家人看。
+
+去識別化背景：
+- 【年齡層、性別、身高體重或 BMI】
+- 【糖尿病類型與目前用藥，例如 第二型、基礎胰島素加 metformin】
+- 每日熱量與醣類目標：【由營養師設定，例如 1600 大卡、每餐 3–4 份醣類】
+- 飲食習慣：【例如 早餐常吃早餐店、午餐外食便當、晚餐在家煮、愛吃麵、不吃牛肉】
+- 其他限制：【例如 腎功能下降需控制蛋白質、預算有限】
+
+要求：
+1. 表格：星期／早餐／午餐／晚餐／點心（需要時），每格 15 字以內，每餐標示「約幾份醣類」。
+2. 盡量保留病人原本愛吃的食物，用調整份量和搭配取代「禁止」。
+3. 食材要在台灣傳統市場或超市容易買到。
+4. 表格後面附「這週的 3 個小目標」，每個 20 字以內。
+
+規則：
+- 醣類份數是估算，請在表格下方註明「份數為估算，請營養師核對」；不確定的份量請加註「（待查證）」。
+- 熱量與醣類目標以我給的為準，不要自行更改。
+- 使用繁體中文、台灣用語（例如 地瓜、一碗飯、便當）。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="dietitian-1-text" data-title="依飲食習慣設計一週菜單"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：依飲食習慣設計一週菜單</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>AI 估的醣類份數常有誤差，請用你們的代換表逐餐核對後再給病人。</p>
+        </article>
+        <article class="pcard" id="dietitian-2" aria-labelledby="dietitian-2-title">
+          <h3 class="pcard-title" id="dietitian-2-title">外食選擇建議</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>依病人常去的外食地點，給出怎麼點、怎麼搭的具體建議。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="dietitian-2-text">你是一位熟悉台灣外食環境的糖尿病營養師。病人的外食情境是：【例如 中午在公司附近吃自助餐或便利商店，晚上常吃麵攤】，每餐的醣類目標是【由營養師設定，例如 3–4 份】。對象是【對象，例如 40 多歲、工作忙碌的上班族】。
+
+請幫我做一份外食指南（總長 500 字以內）：
+1. 針對【外食地點，例如 自助餐、便利商店、麵攤、早餐店】，各給「推薦組合」2 個，以及「怎麼點比較好」3 招，每招 20 字以內。
+2. 每個推薦組合標示大約的醣類份數（估算）。
+3. 列出 5 個「看起來健康、其實醣類不少」的常見選擇，並說明原因，各 20 字以內。
+4. 最後給一句「外食三步驟」口訣，方便病人記。
+
+規則：
+- 份數是估算，請註明「估算值，請以實際份量為準」；不確定的請加註「（待查證）」。
+- 不要點名特定品牌或店家。
+- 使用繁體中文、台灣口語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="dietitian-2-text" data-title="外食選擇建議"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：外食選擇建議</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>同一道菜各店份量差很多；可以請病人拍下常吃的餐點，回診時一起看。</p>
+        </article>
+        <article class="pcard" id="dietitian-3" aria-labelledby="dietitian-3-title">
+          <h3 class="pcard-title" id="dietitian-3-title">醣類代換表白話說明</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>用家裡就有的碗和拳頭，讓病人第一次就聽懂「一份醣類」。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="dietitian-3-text">你是一位糖尿病營養師，要向【對象，例如 剛開始學醣類計算、國中畢業的 60 歲病人】解釋「醣類代換（醣類份數）」。
+
+我們單位採用的代換基準：
+【貼上你們採用的代換基準，例如 1 份醣類 = 15 公克醣類；白飯 1/4 碗 = 1 份】
+
+請幫我寫：
+1. 開場說明，150 字以內：什麼是「一份醣類」、為什麼要算。
+2. 「一份醣類長什麼樣子」：主食、水果、乳品各舉 3 個台灣常見的例子，用碗、湯匙、拳頭、顆數等家裡就有的量具描述份量。
+3. 3 題練習題（例如 一碗白飯加一顆中型蘋果是幾份？），附答案與算法。
+4. 一句方便記憶的口訣，15 字以內。
+
+規則：
+- 份量必須以我貼上的基準為準，不要使用其他版本的代換表。
+- 不確定的份量請加註「（請核對代換表）」，其他不確定的內容請加註「（待查證）」。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="dietitian-3-text" data-title="醣類代換表白話說明"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：醣類代換表白話說明</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>不同教材的份量寫法略有差異，請統一用你們單位給病人的版本。</p>
+        </article>
+        <article class="pcard" id="dietitian-4" aria-labelledby="dietitian-4-title">
+          <h3 class="pcard-title" id="dietitian-4-title">節慶飲食衛教</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>在年節或聚餐前，給病人和家人實際可行的節慶飲食建議。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="dietitian-4-text">你是一位糖尿病營養師，要在【節慶，例如 農曆春節／端午節／中秋節】前，給病人一份節慶飲食衛教。
+
+對象：【例如 使用胰島素的第二型糖尿病病人，以及負責煮飯的家人】
+
+請輸出（總長 500 字以內，不含表格）：
+1. 這個節慶台灣常見的 8 種應景食物，做成表格：食物／常見一份的量／大約醣類份數（估算）／比較好的吃法（20 字以內）。
+2. 「聚餐 5 招」，每招 25 字以內，要實際可行，不要只寫「少吃」。
+3. 給家人的 2 個建議（例如 可以準備哪些替代點心）。
+4. 節慶期間作息改變時，使用胰島素的病人要注意什麼：只寫一般原則，並提醒「劑量調整請先問醫師」。
+
+規則：
+- 醣類份數是估算，請註明；不確定的請加註「（待查證）」。
+- 語氣輕鬆，不要讓病人覺得過節有罪惡感。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="dietitian-4-text" data-title="節慶飲食衛教"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：節慶飲食衛教</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>份數請用你們的代換表核對；可以請病人回診時帶節慶期間的血糖紀錄一起討論。</p>
+        </article>
+        <article class="pcard" id="dietitian-5" aria-labelledby="dietitian-5-title">
+          <h3 class="pcard-title" id="dietitian-5-title">飲食紀錄對照血糖找線索</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>從幾天的飲食與血糖紀錄裡，找出最值得先調整的一餐。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="dietitian-5-text">你是一位糖尿病營養師，要整理病人的飲食與血糖紀錄，給我（營養師）作為諮詢前的參考。以下是病人【天數，例如 3 天】的紀錄（已去識別化）：
+【貼上紀錄，例如 第 1 天早餐：飯糰＋無糖豆漿，餐後 2 小時血糖 198；午餐：……】
+
+請幫我（總長 400 字以內，不含表格）：
+1. 整理成表格：日期／餐別／吃了什麼／估計醣類份數／餐後血糖。
+2. 找出 2–3 個「血糖偏高可能和飲食有關」的模式，每個用一句話說明依據哪幾筆紀錄。
+3. 針對最明顯的一個模式，給 2 個具體、病人容易做到的調整建議。
+4. 列出「資料不足、無法判斷」的地方（例如 缺少份量、缺少用藥時間）。
+
+規則：
+- 血糖也會受藥物、活動、睡眠、壓力影響，不要把所有高血糖都歸因於飲食。
+- 醣類份數是估算，請註明；不確定的請加註「（待查證）」。
+- 不要提出調整藥物的建議。
+- 使用繁體中文。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="dietitian-5-text" data-title="飲食紀錄對照血糖找線索"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：飲食紀錄對照血糖找線索</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>同一個模式要重複出現兩三次才可靠；只憑一兩筆紀錄下的結論，先不要告訴病人。</p>
+        </article>
+        <article class="pcard" id="dietitian-6" aria-labelledby="dietitian-6-title">
+          <h3 class="pcard-title" id="dietitian-6-title">家常菜改成控糖版</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>保留病人愛吃的家常菜風味，改成比較適合控糖的做法。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="dietitian-6-text">你是一位擅長台灣家常菜的糖尿病營養師。請把下面這道菜改成適合糖尿病病人的版本，給【對象，例如 負責煮飯的 60 多歲太太】看。
+
+菜名與原本做法：【例如 滷肉飯：五花肉、冰糖、醬油，配一大碗白飯】
+其他限制：【例如 同時有高血壓、腎功能下降；沒有就寫「無」】
+
+請輸出（總長 400 字以內，不含表格）：
+1. 保留原本風味的 3–5 個調整（食材、調味、烹調方式、份量搭配），各附 20 字以內的理由。
+2. 調整後的食譜：材料（幾人份、份量）與步驟（最多 6 步）。
+3. 調整前後一人份的醣類份數對照表（估算）。
+4. 一個搭配建議，讓這一餐比較均衡。
+
+規則：
+- 醣類份數是估算，請註明；不確定的請加註「（待查證）」。
+- 若有其他限制，請一併考慮並說明。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="dietitian-6-text" data-title="家常菜改成控糖版"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：家常菜改成控糖版</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>先請病人或家人在家試做一次；好吃、做得到，才會持續。</p>
+        </article>
+        <article class="pcard" id="dietitian-7" aria-labelledby="dietitian-7-title">
+          <h3 class="pcard-title" id="dietitian-7-title">糖尿病合併腎臟病的飲食重點</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>整合「控糖」和「護腎」兩邊的飲食建議，處理互相衝突的地方。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="dietitian-7-text">你是一位熟悉糖尿病合併慢性腎臟病（CKD）的營養師。病人目前是【CKD 分期與重要檢驗，例如 第 3b 期、鉀 5.3 mmol/L、磷正常】，營養師設定的每日目標是【例如 蛋白質每公斤體重 0.8 公克、需要限鉀】。
+
+請寫一份給【對象，例如 病人與負責煮飯的家人】的飲食重點說明（總長 400 字以內，不含表格）：
+1. 從「血糖」和「腎臟」兩個角度，說明為什麼要這樣吃，各 60 字以內。
+2. 「可以多吃／適量吃／盡量少吃」三欄表格，每欄 6–8 種台灣常見食物。
+3. 標出「控糖常建議、但腎臟病要小心」的衝突食物（例如 某些高鉀蔬果、全穀類），並說明怎麼處理（例如 蔬菜先燙過再炒）。
+
+規則：
+- 目標數值以我給的為準，不要自行設定；不確定的內容請加註「（待查證）」。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="dietitian-7-text" data-title="糖尿病合併腎臟病的飲食重點"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：糖尿病合併腎臟病的飲食重點</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>CKD 飲食要依分期與檢驗值個別化，內容請和腎臟科醫師的建議一致。</p>
+        </article>
+      </div>
+    </div>
+    <div class="panel" id="pharmacist">
+      <div class="panel-head">
+        <h2 class="panel-title">藥師的 <span class="count mono">7</span> 個提示詞</h2>
+        <p class="panel-lede">整理用藥安全重點，寫成病人看得懂的說明。</p>
+      </div>
+      <ul class="toc" aria-label="藥師的提示詞清單">
+        <li><a href="#pharmacist-1">藥物交互作用重點整理</a></li>
+        <li><a href="#pharmacist-2">多重用藥簡化建議草稿</a></li>
+        <li><a href="#pharmacist-3">胰島素筆針保存與使用衛教</a></li>
+        <li><a href="#pharmacist-4">新藥給病人的說明</a></li>
+        <li><a href="#pharmacist-5">依腎功能核對用藥劑量</a></li>
+        <li><a href="#pharmacist-6">一日用藥時間表</a></li>
+        <li><a href="#pharmacist-7">同類藥物比較表</a></li>
+      </ul>
+      <div class="cards">
+        <article class="pcard" id="pharmacist-1" aria-labelledby="pharmacist-1-title">
+          <h3 class="pcard-title" id="pharmacist-1-title">藥物交互作用重點整理</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>從一長串用藥清單裡，挑出真正有臨床意義的交互作用。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="pharmacist-1-text">你是一位臨床藥師，要整理一位糖尿病病人的藥物交互作用，給我（藥師）和處方醫師參考。
+
+目前用藥（已去識別化）：
+【藥名（英文學名）、劑量、頻次，一行一種】
+病人背景：【年齡層、eGFR、肝功能、其他共病】
+
+請整理：
+1. 表格：藥物組合／可能的交互作用／臨床重要性（高／中／低）／建議處置（例如 監測什麼、是否需要調整），每格 25 字以內。只列有臨床意義的組合。
+2. 依腎功能需要注意劑量的藥物另外列出，並註明依據（例如 仿單或哪一份建議）。
+3. 會影響血糖的藥物另外標註（例如 會升高或降低血糖、可能掩蓋低血糖症狀）。
+
+規則：
+- 不確定、或不同資料來源說法不同的地方，一律加註「（待查證）」，並建議我用哪一類資料庫或仿單核對。
+- 不要列出沒有臨床意義的理論交互作用。
+- 使用繁體中文，藥名用英文學名。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="pharmacist-1-text" data-title="藥物交互作用重點整理"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：藥物交互作用重點整理</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>AI 會漏列，也會誤列交互作用；請用院內藥物資料庫或仿單逐條核對。</p>
+        </article>
+        <article class="pcard" id="pharmacist-2" aria-labelledby="pharmacist-2-title">
+          <h3 class="pcard-title" id="pharmacist-2-title">多重用藥簡化建議草稿</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>幫多重用藥的長者整理用藥時段與可簡化之處，作為和醫師討論的草稿。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="pharmacist-2-text">你是一位熟悉老年醫學的臨床藥師，要為一位多重用藥的糖尿病長者準備「用藥簡化建議草稿」，給主治醫師參考。
+
+去識別化資料：
+- 【年齡層、獨居或有照顧者、認知與視力狀況】
+- 目前用藥：【藥名、劑量、頻次、開立科別，一行一種】
+- 最近檢驗：【HbA1c、eGFR、血壓、其他】
+- 病人的困擾：【例如 一天要吃 5 個時段的藥、常常忘記、曾經低血糖】
+
+請輸出：
+1. 用藥時段整理表：時段／目前要吃的藥，並統計一天要吃幾次。
+2. 可以考慮簡化的地方（例如 合併時段、改用長效或複方、可能可以停用的藥），每項附理由和需要先確認的事，各 40 字以內。
+3. 低血糖風險：哪些藥會增加低血糖風險，可以和醫師討論什麼。
+4. 一段 100 字以內、給醫師的建議摘要。
+
+規則：
+- 這是給醫師參考的草稿，不是處方；每一項都要寫「建議與醫師討論」。
+- 依據請註明（例如 Beers criteria、STOPP/START、仿單）；不確定的請加註「（待查證）」。
+- 使用繁體中文，藥名用英文學名。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="pharmacist-2-text" data-title="多重用藥簡化建議草稿"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：多重用藥簡化建議草稿</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>簡化前要確認每個藥的開立原因；跨科別的用藥，請先和開立醫師溝通。</p>
+        </article>
+        <article class="pcard" id="pharmacist-3" aria-labelledby="pharmacist-3-title">
+          <h3 class="pcard-title" id="pharmacist-3-title">胰島素筆針保存與使用衛教</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>交付胰島素筆時，給病人一張依仿單寫成的保存與使用卡片。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="pharmacist-3-text">你是一位藥師，要在交付胰島素筆時，給病人一份保存與使用說明。
+
+藥品：【胰島素學名與劑型，例如 insulin glargine 300 U/mL 預填筆】
+對象：【例如 第一次使用、住在沒有冷氣的頂樓加蓋、常騎機車外出的病人】
+
+請只依照我貼上的仿單重點撰寫：
+【貼上仿單中保存條件、開封後使用期限、針頭使用方式等段落】
+
+請輸出（全文 300 字以內，可以印成一張卡片）：
+1. 「還沒開封」怎麼放、「開封使用中」怎麼放，各 3 點以內。
+2. 「這些情況不要再用」：例如外觀改變、過期、曾經結凍，列 4–5 點。
+3. 外出、搭車、出國旅遊時的攜帶方式，3 點。
+4. 針頭使用與丟棄方式，3 點。
+
+規則：
+- 溫度、天數等數字只能來自我貼上的仿單內容，不要用你記得的數字；仿單沒寫的請標「（仿單未載明，待查證）」。
+- 使用繁體中文、台灣口語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="pharmacist-3-text" data-title="胰島素筆針保存與使用衛教"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：胰島素筆針保存與使用衛教</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>不同胰島素開封後可用的天數不一樣，請以該品項的仿單為準。</p>
+        </article>
+        <article class="pcard" id="pharmacist-4" aria-labelledby="pharmacist-4-title">
+          <h3 class="pcard-title" id="pharmacist-4-title">新藥給病人的說明</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>病人第一次用新開立的藥時，給一份只根據仿單、看得懂的說明。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="pharmacist-4-text">你是一位臨床藥師，要向病人說明一個新開立的藥。
+
+藥物：【英文學名、劑型與用法，例如 tirzepatide 每週一次皮下注射】
+病人背景（去識別化）：【例如 65 歲、腎功能輕度下降、同時使用 metformin、第一次用注射藥】
+仿單或院內藥品資訊重點：
+【貼上適應症、用法、常見副作用、注意事項等段落】
+
+請寫一份給病人的說明（總長 300 字以內，小學高年級看得懂）：
+1. 這個藥是做什麼的：2 句話。
+2. 怎麼用：步驟或時間，包含忘記用藥怎麼辦。
+3. 常見的不舒服和怎麼處理：3–4 項。
+4. 出現這些情況要馬上回診或就醫：3 項。
+5. 和其他藥一起用要注意的事：只根據我提供的資料。
+
+規則：
+- 只使用我貼上的資料；資料沒有的內容請標「（資料未提供）」，不要自行補充。
+- 除非我有提供，不要寫療效百分比或統計數字。
+- 不確定的內容請加註「（待查證）」。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="pharmacist-4-text" data-title="新藥給病人的說明"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：新藥給病人的說明</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>新藥的資訊 AI 可能還沒學到或記錯，一定以最新仿單為準。</p>
+        </article>
+        <article class="pcard" id="pharmacist-5" aria-labelledby="pharmacist-5-title">
+          <h3 class="pcard-title" id="pharmacist-5-title">依腎功能核對用藥劑量</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>逐一檢查用藥是否需要依腎功能調整，並列出算式方便核對。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="pharmacist-5-text">你是一位臨床藥師，要依腎功能檢查這位糖尿病病人的用藥，產出給我（藥師）核對用的草稿。
+
+去識別化資料：
+- 【年齡】歲、【性別】、體重【數值】公斤、血清肌酸酐【數值】mg/dL
+- eGFR【數值】mL/min/1.73m²（計算公式：【例如 CKD-EPI 2021】）
+- 用藥清單：【藥名（英文學名）、劑量、頻次，一行一種】
+
+請輸出表格：藥名／目前劑量／依腎功能的建議（不需調整、需減量、不建議使用、資料不足）／依據（仿單或哪一份建議）／備註（20 字以內）。
+
+規則：
+- 需要計算 CrCl（Cockcroft-Gault）時，請列出公式與代入的數字，讓我核對。
+- 不同資料來源建議不一致時，請並列說明，不要只選一個。
+- 不確定的地方請加註「（待查證）」。
+- 使用繁體中文，藥名用英文學名。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="pharmacist-5-text" data-title="依腎功能核對用藥劑量"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：依腎功能核對用藥劑量</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>AI 算錯數字並不少見，算式請自己再算一次；最後以仿單和院內資料庫為準。</p>
+        </article>
+        <article class="pcard" id="pharmacist-6" aria-labelledby="pharmacist-6-title">
+          <h3 class="pcard-title" id="pharmacist-6-title">一日用藥時間表</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>把處方整理成一張貼在藥盒旁、長輩照著吃就對的時間表。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="pharmacist-6-text">你是一位社區藥師，要幫病人做一張「一天用藥時間表」，貼在家裡藥盒旁邊。
+
+用藥清單：【藥名、劑量、用法（例如 飯前 30 分鐘、睡前），一行一種】
+病人作息：【例如 6 點起床、7 點早餐、12 點午餐、18 點晚餐、22 點睡覺】
+對象：【例如 視力不好、由兒子協助備藥的長輩】
+
+請輸出：
+1. 表格：時間／要吃（或要打）的藥／幾顆（幾單位）／注意事項（例如 配飯吃、不可磨粉），每格 15 字以內。
+2. 每個藥名後面留一個「外觀：＿＿」空格讓我填（不同廠牌外觀不同）。
+3. 「忘記吃藥怎麼辦」：只針對清單中的藥，依仿單原則各寫一句；不確定的請加註「（待查證）」。
+4. 內容精簡，適合放大字體印在一張 A4。
+
+規則：
+- 時間與劑量完全依照我提供的用法，不可自行更動。
+- 使用繁體中文、台灣用語。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="pharmacist-6-text" data-title="一日用藥時間表"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：一日用藥時間表</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>交付前請病人或家屬對照藥袋，實際唸一次每個時段要吃什麼。</p>
+        </article>
+        <article class="pcard" id="pharmacist-7" aria-labelledby="pharmacist-7-title">
+          <h3 class="pcard-title" id="pharmacist-7-title">同類藥物比較表</h3>
+          <p class="pcard-use"><span class="lbl">用途</span>為醫療團隊整理同一類降血糖藥的劑量、腎功能調整與注意事項。</p>
+          <div class="pbox">
+            <div class="pbox-head"><span class="lbl">提示詞</span><span class="pbox-hint"><mark class="slot">【　】</mark>內換成你的內容</span></div>
+            <pre class="prompt-text" id="pharmacist-7-text">你是一位臨床藥師，要為醫療團隊（醫師、護理師）整理【藥物類別，例如 DPP-4 抑制劑】的同類藥物比較表。
+
+請比較院內有的品項：
+【英文學名，一行一種】
+
+表格欄位：學名／常用劑量／腎功能不全時的劑量調整／肝功能不全時注意／重要交互作用／特殊注意事項／健保給付規定重點。
+
+規則：
+- 每格 20 字以內。
+- 劑量、腎功能調整與健保規定常會更新，每一列最後註明「依據：仿單或哪一份資料」；不確定的格子寫「（待查證）」，不要猜。
+- 表格下方用 3 點摘要「選擇時最需要注意的差異」，每點 30 字以內。
+- 使用繁體中文，藥名用英文學名。</pre>
+          </div>
+          <button type="button" class="copy" data-copy="pharmacist-7-text" data-title="同類藥物比較表"><svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></svg><svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg><span class="copy-label">複製提示詞</span><span class="vh">：同類藥物比較表</span></button>
+          <p class="pcard-tip"><span class="lbl">小提醒</span>表格請以最新仿單和健保署公告逐格核對後，再給團隊使用。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-flow">
+    <h2 class="sec-title" id="h-flow">講者的 AI 工作流程</h2>
+    <p class="sec-lede">郭醫師準備演講與衛教資料的五個步驟。AI 幫忙發想、整理和起草；查證和最後核對由人負責。</p>
+    <p class="flow-key"><span class="k-ai">AI 協助</span><span class="k-human">人工把關</span></p>
+    <ol class="flow">
+      <li class="step">
+        <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7"/></svg></span>
+        <div class="step-body">
+          <p class="step-who">步驟 <span class="mono">1</span>・人＋AI</p>
+          <h3 class="step-title">通勤時語音發想</h3>
+          <p class="step-desc">通勤路上用語音和 AI 聊，把想講的重點、門診遇到的問題先說出來。開車時只用免持語音，不看螢幕。</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M12 18h8M4 6h.5M4 12h.5M7 18h.5"/></svg></span>
+        <div class="step-body">
+          <p class="step-who">步驟 <span class="mono">2</span>・AI</p>
+          <h3 class="step-title">AI 整理大綱</h3>
+          <p class="step-desc">請 AI 把語音對話整理成大綱，同時列出「哪些說法需要查證」。</p>
+        </div>
+      </li>
+      <li class="step step--human">
+        <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18.5V5.5A1.5 1.5 0 0 1 5.5 4H15v8.5"/><path d="M4 18.5A1.5 1.5 0 0 0 5.5 20H11"/><path d="M8 8h4"/><circle cx="16.5" cy="16.5" r="3.2"/><path d="m18.9 18.9 2.6 2.6"/></svg></span>
+        <div class="step-body">
+          <p class="step-who">步驟 <span class="mono">3</span>・人</p>
+          <h3 class="step-title">查證文獻</h3>
+          <p class="step-desc">每個數字、每篇文獻都回到 PubMed、指引或仿單原文確認。AI 給的文獻可能不存在。</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4.5M8 20.5h8M7 8.5h6M7 11.5h9"/></svg></span>
+        <div class="step-body">
+          <p class="step-who">步驟 <span class="mono">4</span>・AI 起草</p>
+          <h3 class="step-title">產出投影片／衛教稿</h3>
+          <p class="step-desc">用查證過的大綱，請 AI 產出投影片文字或衛教稿的初稿。</p>
+        </div>
+      </li>
+      <li class="step step--human">
+        <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5"/><path d="m8.5 14.5 2.5 2.5 4.5-5"/></svg></span>
+        <div class="step-body">
+          <p class="step-who">步驟 <span class="mono">5</span>・人</p>
+          <h3 class="step-title">人工逐字核對</h3>
+          <p class="step-desc">逐字讀過，數字、單位、劑量再對一次，確認沒有病人的可識別資訊，才上台或交給病人。</p>
+        </div>
+      </li>
+    </ol>
+    <p class="flow-sum">AI 幫你省下的是時間，正確性由你負責：步驟 3 查證和步驟 5 逐字核對，不能省。</p>
+  </section>
+
+  <section class="share" aria-labelledby="h-share">
+    <h2 class="share-label" id="h-share">把這一頁分享給同事</h2>
+    <div class="share-row">
+      <span class="share-url" id="page-url">https://liyuan1103.github.io/insulin-titration-demo/prompts.html</span>
+      <button type="button" class="pill-btn" id="copy-url">複製網址</button>
+    </div>
+    <p class="copy-status" id="url-status" role="status" aria-live="polite"></p>
+    <p class="privacy">本頁是靜態網頁：不需登入、不使用 Cookie 或追蹤程式，也不蒐集、不傳送任何資料。按「複製」只會把文字放進你自己裝置的剪貼簿。</p>
+    <p><a class="back-foot" href="start.html">回到「控糖之巔」工具入口</a></p>
+  </section>
+
+</div>
+
+<p class="vh" id="copy-live" role="status" aria-live="polite"></p>
+
+<footer class="disclaimer" role="note">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path class="tri" d="M12 2.2 23 21.3H1z"/><rect class="bang" x="10.9" y="8.4" width="2.2" height="7" rx="1"/><rect class="bang" x="10.9" y="16.7" width="2.2" height="2.2" rx="1"/></svg>
+  <span>提示詞僅供參考，AI 產出須經專業人員核對，不可取代臨床判斷</span>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  document.documentElement.lang = "zh-Hant";
+
+  /* ---------- 把【方括號】標成螢光筆（複製的文字不變） ---------- */
+  var SLOT = /(【[^】]*】)/;
+  Array.prototype.forEach.call(document.querySelectorAll(".prompt-text"), function (pre) {
+    var parts = pre.textContent.split(SLOT);
+    var frag = document.createDocumentFragment();
+    parts.forEach(function (part) {
+      if (!part) return;
+      if (part.charAt(0) === "【" && part.charAt(part.length - 1) === "】") {
+        var m = document.createElement("mark");
+        m.className = "slot";
+        m.textContent = part;
+        frag.appendChild(m);
+      } else {
+        frag.appendChild(document.createTextNode(part));
+      }
+    });
+    pre.textContent = "";
+    pre.appendChild(frag);
+  });
+
+  /* ---------- 角色分頁（網址 #doctor、#educator-3 可直接連到） ---------- */
+  var tablist = document.querySelector(".tabs");
+  var tabs = Array.prototype.slice.call(tablist.querySelectorAll(".tab"));
+  var keys = tabs.map(function (t) { return t.getAttribute("href").slice(1); });
+  var panels = keys.map(function (k) { return document.getElementById(k); });
+  var tabsTop = document.getElementById("tabs-top");
+  var current = 0;
+
+  tablist.setAttribute("role", "tablist");
+  tabs.forEach(function (tab, i) {
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-controls", keys[i]);
+    tab.id = "tab-" + keys[i];
+    panels[i].setAttribute("role", "tabpanel");
+    panels[i].setAttribute("aria-labelledby", "tab-" + keys[i]);
+    panels[i].setAttribute("tabindex", "-1");
+  });
+
+  function select(i) {
+    current = i;
+    tabs.forEach(function (tab, j) {
+      var on = j === i;
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+      tab.setAttribute("tabindex", on ? "0" : "-1");
+      panels[j].hidden = !on;
+    });
+  }
+  function setHash(h) {
+    try { history.replaceState(null, "", "#" + h); } catch (e) { /* 預覽環境不允許時略過 */ }
+  }
+  function keepTabsInView() {
+    // 已經捲過分頁列時，切換後回到新分頁的開頭
+    if (tabsTop.getBoundingClientRect().top < 0) tabsTop.scrollIntoView();
+  }
+  function fromHash(scroll) {
+    var h = "";
+    try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) { h = ""; }
+    if (!h) return false;
+    var i = keys.indexOf(h.split("-")[0]);
+    if (i < 0) return false;
+    select(i);
+    if (scroll) {
+      var el = document.getElementById(h);
+      if (el && el !== panels[i]) el.scrollIntoView();
+      else keepTabsInView();
+    }
+    return true;
+  }
+
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      select(i);
+      setHash(keys[i]);
+      keepTabsInView();
+    });
+    tab.addEventListener("keydown", function (ev) {
+      var next = null;
+      if (ev.key === "ArrowRight") next = (i + 1) % tabs.length;
+      else if (ev.key === "ArrowLeft") next = (i - 1 + tabs.length) % tabs.length;
+      else if (ev.key === "Home") next = 0;
+      else if (ev.key === "End") next = tabs.length - 1;
+      if (next === null) return;
+      ev.preventDefault();
+      select(next);
+      setHash(keys[next]);
+      tabs[next].focus();
+    });
+  });
+  window.addEventListener("hashchange", function () { fromHash(true); });
+
+  if (!fromHash(false)) select(0);
+  else if (location.hash.indexOf("-") > 0) {
+    requestAnimationFrame(function () { fromHash(true); });
+  }
+
+  /* ---------- 一鍵複製 ---------- */
+  var live = document.getElementById("copy-live");
+
+  function selectNode(node) {
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(node);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } catch (e) { /* 無法選取時只顯示提示 */ }
+  }
+  function legacyCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "0";
+    ta.style.left = "0";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  function copyText(text, onOk, onFail) {
+    function fallback() { if (legacyCopy(text)) onOk(); else onFail(); }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(onOk, fallback);
+        return;
+      }
+    } catch (e) { /* 改用舊方法 */ }
+    fallback();
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll(".copy"), function (btn) {
+    var label = btn.querySelector(".copy-label");
+    var source = document.getElementById(btn.getAttribute("data-copy"));
+    var title = btn.getAttribute("data-title");
+    var timer = null;
+    function reset() {
+      btn.classList.remove("is-copied", "is-manual");
+      label.textContent = "複製提示詞";
+    }
+    btn.addEventListener("click", function () {
+      clearTimeout(timer);
+      var text = source.textContent.replace(/^\s+|\s+$/g, "");
+      copyText(text, function () {
+        btn.classList.remove("is-manual");
+        btn.classList.add("is-copied");
+        label.textContent = "已複製";
+        live.textContent = "已複製「" + title + "」，可以貼到 AI 對話框。";
+        timer = setTimeout(reset, 2500);
+      }, function () {
+        selectNode(source);
+        btn.classList.add("is-manual");
+        label.textContent = "已選取，請長按或按右鍵複製";
+        live.textContent = "無法自動複製，已幫你選取提示詞文字，請手動複製。";
+        timer = setTimeout(reset, 6000);
+      });
+    });
+  });
+
+  var urlBtn = document.getElementById("copy-url");
+  var urlEl = document.getElementById("page-url");
+  var urlStatus = document.getElementById("url-status");
+  urlBtn.addEventListener("click", function () {
+    copyText(urlEl.textContent.trim(), function () {
+      urlStatus.textContent = "已複製網址，可以貼到 LINE 或訊息裡。";
+    }, function () {
+      selectNode(urlEl);
+      urlStatus.textContent = "已幫你選取網址，請長按或按右鍵複製。";
+    });
+  });
+})();
+</script>
+</body>
+</html>
